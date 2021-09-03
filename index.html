@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+  <script type="text/javascript" charset="utf-8" src="js.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Home')">Login</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Homepage')">Home</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Mens')">Men</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Women')">Women</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Myaccount')">Myaccount</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Mychart')">Mychart</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'Contact')">Contact us</a>
+    <a href="#" class="tablinks" onclick="fetchlogout()">Logout</a>
+
+  </div>
+
+  <div id="logo" onclick="openNav()">&#9776; CLOTHES</div>
+  <div>
+    <div id="Home" class="tabcontent">
+      <h2>Login</h2>
+      <form id="loginform" action="#" method="POST">
+        <p>
+          <input type="text" name="username" placeholder="user name" id="loginuser" value="username"
+            onchange="getuserid()" required>
+        </p>
+        <p>
+          <input type="password" name="password" placeholder="password" id="loginpass" value="password" required>
+        </p>
+        <p>
+          <input class="btn" type="submit" value="Sing In" />
+        </p>
+        <p>
+          <a href="#" class="tablinks" onclick="opencontent(event, 'Register')">Create an account.</a>
+        </p>
+      </form>
+    </div>
+    <div id="Homepage" class="tabcontent">
+      <h2>Welcome to clothes shop</h2>
+    </div>
+    <div id="Mens" class="tabcontent">
+      <h3>Mens</h3>
+      <form action="#" method="POST" >
+        <table>
+            <thead>
+                <th>FID</th>
+                <th>Name</th>
+                <th>description</th>
+                <th>images_path</th>
+                <th>options</th>
+                <th>Price</th>
+            </thead>
+            <tbody class="tbody" id="Menproduct">
+
+            </tbody>
+        </table>
+       </form>
+    </div>
+
+    <div id="Women" class="tabcontent">
+      <h3>Women</h3>
+      <form action="#" method="POST" >
+        <table>  
+            <thead>
+                <th>FID</th>
+                <th>Name</th>
+                <th>description</th>
+                <th>images_path</th>
+                <th>options</th>
+                <th>Price</th>
+            </thead>
+            <tbody class="tbody" id="Womenproduct">
+
+            </tbody>
+        </table>
+       </form>
+    </div>
+
+    <div id="Myaccount" class="tabcontent">
+      <h3>Myaccount</h3>
+      <form id="editform" action="#" method="POST">
+      <input class="form-control space" type="text" name="username"  id="upusername" value="userna" required></input>
+      <input class="form-control space" type="email" name="email"  id="upemail" value="username@username2" required></input>
+      <input class="form-control space" type="number" name="phone"  id="upphone" value="1012" required></input>
+      <input class="form-control space" type="number" name="postcode"  id="uppostcode" value="10102" required></input>
+      <input class="form-control space" type="password" name="password" placeholder="password" id="uppassword" value="password2" required></input>
+      <input class="form-control space" type="password" name="password2" placeholder="password again" id="uppassword2" value="password2" required></input>
+      <input class="btn" type="submit" value="submit"></input>
+      <form>
+    </div>
+    <div id="Mychart" class="tabcontent">
+      <form action="#" method="POST">
+        <h1>Your order</h1>
+        <table>
+          <thead>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Value</th>
+            <th>totalprice</th>
+          </thead>
+          <tbody class="showtbody" id="showorderform">
+          </tbody>
+        </table>
+        <button id="sumtotalprice"><a href="../app/payment.html">confirmorder</a></button>
+      </form>
+    </div>
+
+    <div id="Contact us" class="tabcontent">
+      <h3>Contact us</h3>
+      <p></p>
+    </div>
+
+    <div onclick="fetchlogout()" id="Logout" class="tabcontent">
+      <h3>Log out</h3>
+      <p></p>
+    </div>
+    <div id="Register" class="tabcontent">
+      <form action="#" method="POST" id="registerform">
+        <h1>registerform</h1>
+        <input class="form-control space" type="text" name="username" id="regusername" value="username" required>
+        <input class="form-control space" type="email" name="email" id="regemail" value="username@username" required>
+        <input class="form-control space" type="text" name="phone" id="regphone" value="1111111111" required>
+        <input  class="form-control space" type="number" name="postcode" id="regpostcode" value="1010" required>
+        <input class="form-control space" type="password" name="password" placeholder="password" id="regpassword" value="password" required>
+        <input  class="form-control space" type="password" name="password2" placeholder="password again" id="regpassword2" value="password"
+          required>
+        <input class="btn" type="submit" name="submit" onclick="opencontent(event, 'Home')">
+        <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
+      </form>
+    </div>
+
+  </div>
+</body>
+
+</html>
