@@ -268,7 +268,22 @@ elseif ($request->cookies->has('PHPSESSID')) {
             } else {
                 $response->setStatusCode(400);
             }
-        } elseif ($request->query->getAlpha('action') == 'deleteFOOD') {
+        }
+        elseif ($request->query->getAlpha('action') == 'orderproduct') {
+            $res = $session->get('sessionObj')->orderproduct(
+                $request->request->get('productID')
+            );
+            if ($res === true) {
+                $ip = $request->getClientIp();
+                $res =$session->get('sessionObj')->logEvent($ip,'order clothes',$request->cookies->get('PHPSESSID'));
+                $response->setStatusCode(201);
+            } elseif ($res === false) {
+                $response->setStatusCode(403);
+            } elseif ($res === 0) {
+                $response->setStatusCode(500);
+            }
+        } 
+         elseif ($request->query->getAlpha('action') == 'deleteFOOD') {
             $res = $session->get('sessionObj')->deleteFOOD(
                 $request->request->get('F_ID')
             );

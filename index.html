@@ -3,7 +3,10 @@
 
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+  <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
+<script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
   <script type="text/javascript" charset="utf-8" src="js.js" defer></script>
   <link rel="stylesheet" href="style.css">
@@ -20,7 +23,7 @@
     <a href="#" class="tablinks" onclick="opencontent(event, 'Myaccount')">Myaccount</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Mychart')">Mychart</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Contact')">Contact us</a>
-    <a href="#" class="tablinks" onclick="fetchlogout()">Logout</a>
+    <a href="#" class="tablinks" onclick="fetchlogout()" onclick="opencontent(event, 'Home')">Logout</a>
 
   </div>
 
@@ -51,14 +54,7 @@
       <h3>Mens</h3>
       <form action="#" method="POST" >
         <table>
-            <thead>
-                <th>FID</th>
-                <th>Name</th>
-                <th>description</th>
-                <th>images_path</th>
-                <th>options</th>
-                <th>Price</th>
-            </thead>
+          
             <tbody class="tbody" id="Menproduct">
 
             </tbody>
@@ -70,14 +66,6 @@
       <h3>Women</h3>
       <form action="#" method="POST" >
         <table>  
-            <thead>
-                <th>FID</th>
-                <th>Name</th>
-                <th>description</th>
-                <th>images_path</th>
-                <th>options</th>
-                <th>Price</th>
-            </thead>
             <tbody class="tbody" id="Womenproduct">
 
             </tbody>
@@ -124,6 +112,7 @@
       <p></p>
     </div>
     <div id="Register" class="tabcontent">
+      <div id="target" class="alert alert-danger fade-in is-paused toggle invisible" role="alert">Username exist</div>
       <form action="#" method="POST" id="registerform">
         <h1>registerform</h1>
         <input class="form-control space" type="text" name="username" id="regusername" value="username" required>
@@ -133,9 +122,10 @@
         <input class="form-control space" type="password" name="password" placeholder="password" id="regpassword" value="password" required>
         <input  class="form-control space" type="password" name="password2" placeholder="password again" id="regpassword2" value="password"
           required>
-        <input class="btn" type="submit" name="submit" onclick="opencontent(event, 'Home')">
-        <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
+        <input class="btn" type="submit" name="submit" onclick="">
+        
       </form>
+      <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
     </div>
 
   </div>

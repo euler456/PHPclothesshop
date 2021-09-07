@@ -6,7 +6,7 @@ function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
 }
 
-function opencontent(evt, cityName) {
+function opencontent(evt, idlocate) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -16,7 +16,7 @@ function opencontent(evt, cityName) {
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(cityName).style.display = "block";
+    document.getElementById(idlocate).style.display = "block";
     evt.currentTarget.className += " active";
 }
 
@@ -46,8 +46,13 @@ function fetchlogin(evt) {
                 localStorage.removeItem('CustomerID');
                 return;
             }
-            if (headers.status == 203) {
-                console.log('registration required');
+           
+            if (headers.status == 200) {
+                mendisplay();
+                womendisplay();
+                fetchcreateorder();
+                opencontent(evt,'Mens');
+             
                 // only need csrf
             }
             headers.json().then(function (body) {
@@ -90,7 +95,6 @@ function fetchlogout() {
 document.getElementById('registerform').addEventListener('submit', function (e) {
     fetchregister(e)
 });
-
 function fetchregister(evt) {
     evt.preventDefault();
     var fd = new FormData();
@@ -107,13 +111,16 @@ function fetchregister(evt) {
             credentials: 'include'
         })
         .then(function (headers) {
-            if (headers.status == 400) {
+            if (headers.status == 418) {
+                $("#target").removeClass('invisible');
                 console.log('user exists');
+                
                 return;
             }
 
             if (headers.status == 201) {
                 console.log('registration updated');
+                opencontent(evt, 'Home')
                 return;
             }
 
@@ -123,7 +130,7 @@ function fetchregister(evt) {
         });
 }
 
-document.getElementById('Menproduct').innerHTML=mendisplay();
+
 function mendisplay(){
 fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
 {
@@ -134,19 +141,24 @@ fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
 .then(response=>{console.log(response);
     let output = '';
     for(let i in response){
-        output+=`<tr>
-        <td>${response[i].productID}</td>
-        <td>${response[i].productname}</td>
+        output+=`<tr class="trmarg">
+        <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td class="hide" style="visibility:hidden">Name:${response[i].productID}</td>
+        <td>Name:${response[i].productname}</td>
         <td>${response[i].description}</td>
-        <td ><img src='../images/${response[i].image }' style="width: 100px; height: 100px;"></td>
         <td>${response[i].price}</td>
-        <td><input type="submit" name="delete" value="delete"  onclick="fetchdelete(${response[i].productID})"></td>
+        <td><select id="size">
+  <option value="S">S</option>
+  <option value="M">M</option>
+  <option value="L">L</option>
+</select><td>
+        <td><input type="submit" name="order" value="order"  onclick="fetchorder(size,${response[i].productID})"></td>
         </tr>`;
     }
     document.querySelector('#Menproduct').innerHTML = output;
 }).catch(error=>console.error(error));
 }
-document.getElementById('Womenproduct').innerHTML=womendisplay();
+
 function womendisplay(){
 fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
 {
@@ -157,14 +169,19 @@ fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
 .then(response=>{console.log(response);
     let output = '';
     for(let i in response){
-        output+=`<tr>
-        <td>${response[i].productID}</td>
+        output+=`<tr class="trmarg">
+        <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td class="hide" style="visibility:hidden">${response[i].productID}</td>
         <td>${response[i].productname}</td>
         <td>${response[i].description}</td>
-        <td ><img src='../images/${response[i].image }' style="width: 100px; height: 100px;"></td>
         <td>${response[i].price}</td>
-        <td><input type="submit" name="delete" value="delete"  onclick="fetchdelete(${response[i].productID})"></td>
-        </tr>`;
+        <td><select id="size">
+  <option value="S">S</option>
+  <option value="M">M</option>
+  <option value="L">L</option>
+</select><td>
+<td><input type="submit" name="order" value="order"  onclick="fetchorder(size,${response[i].productID})"></td>
+</tr>`;
     }
     document.querySelector('#Womenproduct').innerHTML = output;
 }).catch(error=>console.error(error));
@@ -195,6 +212,60 @@ function fetchupdate(evt) {
      
         if(headers.status == 201) {
             console.log(' updated');
+            opencontent(evt,'Mens');
+            return;
+        }
+       
+    })
+    .catch(function(error) {console.log(error)});
+}
+
+
+function fetchorder(size,productID) {
+    var fd = new FormData();
+    fd.append('productID', productID);
+    fetch('http://localhost/clothesshop/api/api.php?action=orderproduct', 
+    {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
+    })
+    .then(function(headers) {
+        if(headers.status == 400) {
+            console.log('can not order');
+            return;
+        }
+     
+        if(headers.status == 201) {
+            console.log('order succussful');
+            return;
+        }
+       
+    })
+    .catch(function(error) {console.log(error)});
+}
+
+function fetchcreateorder(evt) {
+    
+    var orderstatus= "Notpayed";
+    var totalprice= 0 ;
+    var fd = new FormData();
+    fd.append('orderstatus', orderstatus );
+    fd.append('totalprice', totalprice );
+    fetch('http://localhost/clothesshop/api/api.php?action=createorder', 
+    {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
+    })
+    .then(function(headers) {
+        if(headers.status == 400) {
+            console.log('can not order you are not loggedin');
+            return;
+        }
+     
+        if(headers.status == 201) {
+            console.log('going to order');
             return;
         }
        

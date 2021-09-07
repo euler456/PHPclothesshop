@@ -184,6 +184,14 @@ class sqsSession
                     return false;
                 }
             }
+    public function orderproduct($productID) {
+                global $sqsdb;
+                    if($sqsdb->orderProduct($productID)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
     public function updatefood($F_ID,$foodname,$price, $description,$options,$image) {
             global $sqsdb;
                     if($sqsdb->updatefooditem($F_ID,$foodname,$price,$description,$options,$image)) {

@@ -223,7 +223,7 @@ class sqsuser
   
     function createorderform($CustomerID)
     {
-        $sql = "INSERT INTO orderform (orderstatus,CustomerID,sumtotalprice)  VALUES ('Notpayed',:CustomerID,'0');";
+        $sql = "INSERT INTO orderform (orderstatus,CustomerID,totalprice)  VALUES ('Notpayed',:CustomerID,'0');";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
         $result = $stmt->execute();
@@ -447,6 +447,18 @@ function deletefood($F_ID)
 $sql = "DELETE FROM food where F_ID = :F_ID;";
 $stmt = $this->dbconn->prepare($sql);
 $stmt->bindParam(':F_ID', $F_ID, PDO::PARAM_INT);
+$result = $stmt->execute();
+if ($result === true) {
+    return true;
+} else {
+    return false;
+}
+}
+function orderProduct($productID)
+{
+$sql = "DELETE FROM food where productID = :productID;";
+$stmt = $this->dbconn->prepare($sql);
+$stmt->bindParam(':productID', $F_ID, PDO::PARAM_INT);
 $result = $stmt->execute();
 if ($result === true) {
     return true;
