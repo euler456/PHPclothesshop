@@ -14,12 +14,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
+//||
 $request = Request::createFromGlobals();
 $response = new Response();
 $session = new Session(new NativeSessionStorage(), new AttributeBag());
-//$http_origin = $_SERVER['HTTP_ORIGIN'];
-/*if ( $http_origin == 'https://proj3frontend.herokuapp.com' || $http_origin == 'https://ux2website.herokuapp.com'  )
+/*$http_origin = $_SERVER['HTTP_ORIGIN'];
+if ( $http_origin == 'http://localhost/clothesshop/#')
 {
     $response->headers->set('Access-Control-Allow-Origin', $http_origin);
 }
@@ -32,6 +32,7 @@ $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE,
 $response->headers->set('Access-Control-Allow-Origin', 'http://localhost/');
 $response->headers->set('Access-Control-Allow-Credentials', 'true');
 //put session here because here is the place the action started
+
 ini_set('session.cookie_samesite',"None");
 ini_set('session.cookie_secure', "1");
 $session->start();

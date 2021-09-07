@@ -85,6 +85,7 @@ function fetchlogout() {
             localStorage.removeItem('phone');
             localStorage.removeItem('postcode');
             localStorage.removeItem('CustomerID');
+            opencontent(evt,'Home');
         })
         .catch(function (error) {
             console.log(error)
