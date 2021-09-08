@@ -129,7 +129,7 @@ class sqsuser
             return false;
         }
     }
-    function logevent($CustomerID, $ip_addr,$action,$PHPSESSID)
+    function logevent($CustomerID,$ip_addr,$action,$PHPSESSID)
     {
         $sql = "INSERT INTO logtable (CustomerID ,ip_addr, action ,usertype,PHPSESSID) 
                 VALUES (:CustomerID,:ip_addr,:action,'user',:PHPSESSID);";
@@ -454,11 +454,15 @@ if ($result === true) {
     return false;
 }
 }
-function orderProduct($productID)
+function orderProduct($productID,$productname,$price,$size,$CustomerID)
 {
-$sql = "DELETE FROM food where productID = :productID;";
+$sql = "INSERT INTO orderitem (productID,productname,price,size,orderID)  VALUES (:productID,:productname,:price,:size,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ));";
 $stmt = $this->dbconn->prepare($sql);
-$stmt->bindParam(':productID', $F_ID, PDO::PARAM_INT);
+$stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+$stmt->bindParam(':size', $size, PDO::PARAM_STR);
+$stmt->bindParam(':productname', $productname, PDO::PARAM_STR);
+$stmt->bindParam(':price', $price, PDO::PARAM_INT);
+$stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
 $result = $stmt->execute();
 if ($result === true) {
     return true;

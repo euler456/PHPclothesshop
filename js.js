@@ -47,7 +47,7 @@ function fetchlogin(evt) {
                 return;
             }
            
-            if (headers.status == 200) {
+            if (headers.status == 201) {
                 mendisplay();
                 womendisplay();
                 fetchcreateorder();
@@ -85,7 +85,7 @@ function fetchlogout() {
             localStorage.removeItem('phone');
             localStorage.removeItem('postcode');
             localStorage.removeItem('CustomerID');
-            opencontent(evt,'Home');
+            
         })
         .catch(function (error) {
             console.log(error)
@@ -142,18 +142,18 @@ fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
 .then(response=>{console.log(response);
     let output = '';
     for(let i in response){
-        output+=`<tr class="trmarg">
+        output+=`<tr class="container">
         <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
-        <td class="hide" style="visibility:hidden">Name:${response[i].productID}</td>
-        <td>Name:${response[i].productname}</td>
+        <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
+        <td class="pdname">${response[i].productname}</td>
         <td>${response[i].description}</td>
-        <td>${response[i].price}</td>
-        <td><select id="size">
+        <td class="pdprice">${response[i].price}</td>
+        <td><select  class="vat">
   <option value="S">S</option>
   <option value="M">M</option>
   <option value="L">L</option>
 </select><td>
-        <td><input type="submit" name="order" value="order"  onclick="fetchorder(size,${response[i].productID})"></td>
+        <td><buttom class="order"  value="order">order</buttom></td>
         </tr>`;
     }
     document.querySelector('#Menproduct').innerHTML = output;
@@ -170,18 +170,18 @@ fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
 .then(response=>{console.log(response);
     let output = '';
     for(let i in response){
-        output+=`<tr class="trmarg">
+        output+=`<tr class="container">
         <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
-        <td class="hide" style="visibility:hidden">${response[i].productID}</td>
-        <td>${response[i].productname}</td>
+        <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
+        <td  class="pdname">${response[i].productname}</td>
         <td>${response[i].description}</td>
-        <td>${response[i].price}</td>
-        <td><select id="size">
+        <td class="pdprice">${response[i].price}</td>
+        <td><select  class="vat">
   <option value="S">S</option>
   <option value="M">M</option>
   <option value="L">L</option>
 </select><td>
-<td><input type="submit" name="order" value="order"  onclick="fetchorder(size,${response[i].productID})"></td>
+<td><buttom class="order"  value="order">order</buttom></td>
 </tr>`;
     }
     document.querySelector('#Womenproduct').innerHTML = output;
@@ -221,10 +221,17 @@ function fetchupdate(evt) {
     .catch(function(error) {console.log(error)});
 }
 
-
-function fetchorder(size,productID) {
+$(document).on('click', '.order', function(event) {
+    var size = $(this).closest('.container').find('.vat').val();
+    var productname = $(this).closest('.container').find('.pdname').html();
+    var price = $(this).closest('.container').find('.pdprice').html();
+    var productid = $(this).closest('.container').find('.prdid').html();
     var fd = new FormData();
-    fd.append('productID', productID);
+    fd.append('productID',productid );
+    fd.append('productname', productname );
+    fd.append('price', price );
+    fd.append('size', size );
+    alert(productname );
     fetch('http://localhost/clothesshop/api/api.php?action=orderproduct', 
     {
         method: 'POST',
@@ -244,6 +251,13 @@ function fetchorder(size,productID) {
        
     })
     .catch(function(error) {console.log(error)});
+    
+  });
+  
+function fetchorder(size,productID) {
+    var fd = new FormData();
+    fd.append('productID', productID);
+  
 }
 
 function fetchcreateorder(evt) {

@@ -109,7 +109,7 @@ elseif ($request->cookies->has('PHPSESSID')) {
                     $response->setStatusCode(203);
                     $response->setContent(json_encode($res));
                 } elseif (count($res) > 1) {
-                    $response->setStatusCode(200);
+                    $response->setStatusCode(201);
                     $response->setContent(json_encode($res));
                     $ip = $request->getClientIp();
                     $res =$session->get('sessionObj')->logEvent( $ip,'login',$request->cookies->get('PHPSESSID'));
@@ -272,7 +272,11 @@ elseif ($request->cookies->has('PHPSESSID')) {
         }
         elseif ($request->query->getAlpha('action') == 'orderproduct') {
             $res = $session->get('sessionObj')->orderproduct(
-                $request->request->get('productID')
+                $request->request->get('productID'),
+                $request->request->get('productname'),
+                $request->request->get('price'),
+                $request->request->get('size')
+              
             );
             if ($res === true) {
                 $ip = $request->getClientIp();
@@ -616,8 +620,8 @@ elseif ($request->cookies->has('PHPSESSID')) {
         } elseif ($request->query->getAlpha('action') == 'logout') {
             $ip = $request->getClientIp();
             $res =$session->get('sessionObj')->logEvent( $ip,'logout',$request->cookies->get('PHPSESSID'));
-            $session->get('sessionObj')->logout();
             $response->setStatusCode(200);
+            $session->get('sessionObj')->logout();
            
         } 
         elseif ($request->query->getAlpha('action') == 'adminlogout') {

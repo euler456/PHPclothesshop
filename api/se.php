@@ -184,9 +184,9 @@ class sqsSession
                     return false;
                 }
             }
-    public function orderproduct($productID) {
+    public function orderproduct($productID,$productname,$price,$size) {
                 global $sqsdb;
-                    if($sqsdb->orderProduct($productID)) {
+                    if($sqsdb->orderProduct($productID,$productname,$price,$size,$this->CustomerID)) {
                         return true;
                     } else {
                         return false;
