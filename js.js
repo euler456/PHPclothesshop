@@ -9,15 +9,37 @@ function closeNav() {
 function opencontent(evt, idlocate) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    document.getElementById(idlocate).style.display = "block";
-    evt.currentTarget.className += " active";
+   
+    fetch('http://localhost/clothesshop/api/api.php?action=isloggedin', {
+        method: 'POST',
+        credentials: 'include'
+    })
+    .then(function (headers) {
+        if (headers.status == 403) {
+            console.log('Did not login');
+           
+        }
+       
+        if (headers.status == 203) {
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(idlocate).style.display = "block";
+            evt.currentTarget.className += " active";
+            // only need csrf
+        }
+    
+    })
+    .catch(function (error) {
+        console.log(error)
+    });
+  
+    
+    
 }
 
 document.getElementById('loginform').addEventListener('submit', function (e) {
@@ -143,6 +165,7 @@ fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
     let output = '';
     for(let i in response){
         output+=`<tr class="container">
+        <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
         <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
         <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
         <td class="pdname">${response[i].productname}</td>
@@ -171,7 +194,8 @@ fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
     let output = '';
     for(let i in response){
         output+=`<tr class="container">
-        <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
+        <td ><img  src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
         <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
         <td  class="pdname">${response[i].productname}</td>
         <td>${response[i].description}</td>
@@ -224,6 +248,7 @@ function fetchupdate(evt) {
 $(document).on('click', '.order', function(event) {
     var size = $(this).closest('.container').find('.vat').val();
     var productname = $(this).closest('.container').find('.pdname').html();
+    var image = $(this).closest('.container').find('.pdimg').html();
     var price = $(this).closest('.container').find('.pdprice').html();
     var productid = $(this).closest('.container').find('.prdid').html();
     var fd = new FormData();
@@ -231,7 +256,8 @@ $(document).on('click', '.order', function(event) {
     fd.append('productname', productname );
     fd.append('price', price );
     fd.append('size', size );
-    alert(productname );
+    fd.append('image', image );
+    alert(image );
     fetch('http://localhost/clothesshop/api/api.php?action=orderproduct', 
     {
         method: 'POST',
@@ -284,6 +310,147 @@ function fetchcreateorder(evt) {
             return;
         }
        
+    })
+    .catch(function(error) {console.log(error)});
+}
+
+
+function orderchart(){
+    fetch('http://localhost/clothesshop/api/api.php?action=showorderform',
+    {
+        method: 'GET',
+        credentials: 'include'
+    }
+    ).then((res)=>res.json())
+    .then(response=>{console.log(response);
+        let output = '';
+        for(let i in response){
+            output+=`<tr class="chartcontainer">
+            <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
+            <td class="oditem" style="visibility:hidden">${response[i].orderitem_ID}</td>
+            <td ><img src='../images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
+            <td class="pdname">${response[i].productname}</td>
+            <td class="pdprice">${response[i].price}</td>
+            <td><buttom class="delete"  value="delete">delete</buttom></td>
+            </tr>`;
+        }
+        document.querySelector('#showorderform').innerHTML = output;
+    }).catch(error=>console.error(error));
+    }
+
+
+    $(document).on('click', '.delete', function(event) {
+        
+        var orderitem_ID = $(this).closest('.chartcontainer').find('.oditem').html();
+        var fd = new FormData();
+        fd.append('orderitem_ID',orderitem_ID );
+        alert(orderitem_ID );
+        fetch('http://localhost/clothesshop/api/api.php?action=orderdelete', 
+        {
+            method: 'POST',
+            body: fd,
+            credentials: 'include'
+        })
+        .then(function(headers) {
+            if(headers.status == 400) {
+                console.log('can not delete');
+                return;
+            }
+         
+            if(headers.status == 201) {
+                console.log('delete succussful');
+                updateDiv();
+                return;
+            }
+           
+        })
+        .catch(function(error) {console.log(error)});
+        
+      });
+    function fetchislogin() {
+        fetch('http://localhost/clothesshop/api/api.php?action=isloggedin', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(function (headers) {
+                if (headers.status == 403) {
+                    console.log('Did not login');
+                   
+                    return false;
+                }
+               
+                if (headers.status == 203) {
+                    return true;  
+                    // only need csrf
+                }
+            
+            })
+            .catch(function (error) {
+                console.log(error)
+            });
+    }
+    function updateDiv()
+{ 
+    $( "#showorderform" ).load(window.location.href + " #showorderform" );
+    orderchart();
+}
+function orderchart(){
+    fetch('http://localhost/clothesshop/api/api.php?action=showorderform',
+    {
+        method: 'GET',
+        credentials: 'include'
+    }
+    ).then((res)=>res.json())
+    .then(response=>{console.log(response);
+        let output = '';
+        for(let i in response){
+            output+=`<tr class="chartcontainer">
+            <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
+            <td class="oditem" style="visibility:hidden">${response[i].orderitem_ID}</td>
+            <td ><img src='../images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
+            <td class="pdname">${response[i].productname}</td>
+            <td class="pdprice">${response[i].price}</td>
+            <td><buttom class="delete"  value="delete">delete</buttom></td>
+            </tr>`;
+        }
+        document.querySelector('#showorderform').innerHTML = output;
+    }).catch(error=>console.error(error));
+    }
+
+function sumtotalpriceff(){
+    fetch('http://localhost/clothesshop/api/api.php?action=sumtotalprice',
+    {
+        method: 'GET',
+        credentials: 'include'
+    }
+    ).then(function(headers) {
+        if(headers.status == 400) {
+            console.log('sumtotalprice');
+            return;
+        }
+     
+        if(headers.status == 201) {
+            console.log('fail to sum');
+            
+            fetch('http://localhost/clothesshop/api/api.php?action=confirmorderform',
+            {
+                method: 'GET',
+                credentials: 'include'
+            }
+            ).then((res)=>res.json())
+            .then(response=>{console.log(response);
+                let output = '';
+                for(let i in response){
+                    output+=`<tr>
+                    <td type="text" class="orderID">${response[i].orderID}</td>
+                    <td type="datetime" class="ordertime">${response[i].ordertime}</td>
+                    <td type="number" class="totalprice">${response[i].totalprice}</td>
+                    </tr>`;
+                }
+                document.querySelector('#completeorder').innerHTML = output;
+            }).catch(error=>console.error(error));
+            return;
+        }
     })
     .catch(function(error) {console.log(error)});
 }

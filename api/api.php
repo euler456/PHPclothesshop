@@ -275,7 +275,8 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 $request->request->get('productID'),
                 $request->request->get('productname'),
                 $request->request->get('price'),
-                $request->request->get('size')
+                $request->request->get('size'),
+                $request->request->get('image')
               
             );
             if ($res === true) {

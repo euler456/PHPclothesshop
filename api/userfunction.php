@@ -165,7 +165,7 @@ class sqsuser
     }
     function sumtotalpriceff($CustomerID)
     {
-        $sql = "UPDATE orderform SET sumtotalprice = (SELECT SUM(totalprice) FROM orderitem 
+        $sql = "UPDATE orderform SET totalprice = (SELECT SUM(price) FROM orderitem 
         WHERE orderID = (SELECT max(orderID) orderID FROM (SELECT max(orderID) orderID FROM orderform 
         WHERE CustomerID =:CustomerID) AS T )) WHERE orderID= (SELECT max(orderID) orderID FROM (SELECT max(orderID) orderID FROM orderform 
         WHERE CustomerID =:CustomerID ) AS T ) ;";
@@ -454,15 +454,16 @@ if ($result === true) {
     return false;
 }
 }
-function orderProduct($productID,$productname,$price,$size,$CustomerID)
+function orderProduct($productID,$productname,$price,$size,$CustomerID,$image)
 {
-$sql = "INSERT INTO orderitem (productID,productname,price,size,orderID)  VALUES (:productID,:productname,:price,:size,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ));";
+$sql = "INSERT INTO orderitem (productID,productname,price,size,orderID,image)  VALUES (:productID,:productname,:price,:size,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ),:image);";
 $stmt = $this->dbconn->prepare($sql);
 $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
 $stmt->bindParam(':size', $size, PDO::PARAM_STR);
 $stmt->bindParam(':productname', $productname, PDO::PARAM_STR);
 $stmt->bindParam(':price', $price, PDO::PARAM_INT);
 $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+$stmt->bindParam(':image', $image, PDO::PARAM_STR);
 $result = $stmt->execute();
 if ($result === true) {
     return true;
