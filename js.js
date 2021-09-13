@@ -166,10 +166,9 @@ fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
     for(let i in response){
         output+=`<tr class="container">
         <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
-        <td ><img src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td ><img src='./images/${response[i].image}.jpg' style="width: 500px; height:400px;margin-top:20px;"></td>
         <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
         <td class="pdname">${response[i].productname}</td>
-        <td>${response[i].description}</td>
         <td class="pdprice">${response[i].price}</td>
         <td><select  class="vat">
   <option value="S">S</option>
@@ -195,10 +194,9 @@ fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
     for(let i in response){
         output+=`<tr class="container">
         <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
-        <td ><img  src='../images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td ><img  src='./images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
         <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
         <td  class="pdname">${response[i].productname}</td>
-        <td>${response[i].description}</td>
         <td class="pdprice">${response[i].price}</td>
         <td><select  class="vat">
   <option value="S">S</option>
@@ -257,7 +255,6 @@ $(document).on('click', '.order', function(event) {
     fd.append('price', price );
     fd.append('size', size );
     fd.append('image', image );
-    alert(image );
     fetch('http://localhost/clothesshop/api/api.php?action=orderproduct', 
     {
         method: 'POST',
@@ -314,37 +311,11 @@ function fetchcreateorder(evt) {
     .catch(function(error) {console.log(error)});
 }
 
-
-function orderchart(){
-    fetch('http://localhost/clothesshop/api/api.php?action=showorderform',
-    {
-        method: 'GET',
-        credentials: 'include'
-    }
-    ).then((res)=>res.json())
-    .then(response=>{console.log(response);
-        let output = '';
-        for(let i in response){
-            output+=`<tr class="chartcontainer">
-            <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
-            <td class="oditem" style="visibility:hidden">${response[i].orderitem_ID}</td>
-            <td ><img src='../images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
-            <td class="pdname">${response[i].productname}</td>
-            <td class="pdprice">${response[i].price}</td>
-            <td><buttom class="delete"  value="delete">delete</buttom></td>
-            </tr>`;
-        }
-        document.querySelector('#showorderform').innerHTML = output;
-    }).catch(error=>console.error(error));
-    }
-
-
     $(document).on('click', '.delete', function(event) {
         
         var orderitem_ID = $(this).closest('.chartcontainer').find('.oditem').html();
         var fd = new FormData();
         fd.append('orderitem_ID',orderitem_ID );
-        alert(orderitem_ID );
         fetch('http://localhost/clothesshop/api/api.php?action=orderdelete', 
         {
             method: 'POST',
@@ -405,10 +376,11 @@ function orderchart(){
         let output = '';
         for(let i in response){
             output+=`<tr class="chartcontainer">
-            <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
-            <td class="oditem" style="visibility:hidden">${response[i].orderitem_ID}</td>
-            <td ><img src='../images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
+            <td class="prdid" style="display:none">${response[i].productID}</td>
+            <td class="oditem" style="display:none">${response[i].orderitem_ID}</td>
+            <td ><img src='./images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
             <td class="pdname">${response[i].productname}</td>
+            <td>${response[i].size}</td>
             <td class="pdprice">${response[i].price}</td>
             <td><buttom class="delete"  value="delete">delete</buttom></td>
             </tr>`;
@@ -442,9 +414,9 @@ function sumtotalpriceff(){
                 let output = '';
                 for(let i in response){
                     output+=`<tr>
-                    <td type="text" class="orderID">${response[i].orderID}</td>
-                    <td type="datetime" class="ordertime">${response[i].ordertime}</td>
-                    <td type="number" class="totalprice">${response[i].totalprice}</td>
+                    <td type="text" class="orderID">OrderID:${response[i].orderID}</td>
+                    <td type="datetime" class="ordertime">ordertime:${response[i].ordertime}</td>
+                    <td type="number" class="totalprice">Price:${response[i].totalprice}</td>
                     </tr>`;
                 }
                 document.querySelector('#completeorder').innerHTML = output;
@@ -453,4 +425,28 @@ function sumtotalpriceff(){
         }
     })
     .catch(function(error) {console.log(error)});
+}
+
+function fetchcheckoutupdate() {
+    fetch('http://localhost/clothesshop/api/api.php?action=checkoutupdate', {
+            method: 'POST',
+            credentials: 'include'
+        })
+        .then(function (headers) {
+            if (headers.status == 403) {
+                console.log('did not check');
+               
+                return false;
+            }
+           
+            if (headers.status == 201) {
+                console.log('check out successful');
+                return true;  
+                // only need csrf
+            }
+        
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
 }

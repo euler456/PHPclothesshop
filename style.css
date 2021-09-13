@@ -1,4 +1,6 @@
-
+body{
+  font-family:fantasy;
+}
 #logo{
    font-size:40px;
    padding-left: 3%;
@@ -70,7 +72,8 @@ margin: 10px;
 .invisible {
   visibility: hidden;
 }
-td {
+td{
+  font-family: fantasy;
   margin: 10px;
   padding: 0px 30px 5px;
  width: 100%;
@@ -78,12 +81,45 @@ td {
 
 }
 tr{
-  
   display: block;
-  width: 100%;
+ 
   
 }
 
 .trmarg{
   margin-bottom: 30px;
+}
+
+.rounded {
+  border-radius: 1rem
+}
+
+.nav-pills .nav-link {
+  color: #555
+}
+
+.nav-pills .nav-link.active {
+  color: white
+}
+
+input[type="radio"] {
+  margin-right: 5px
+}
+
+.bold {
+  font-weight: bold
+}
+#showorderform{
+  float:left;
+  width: 629px;
+  display:inline;
+}
+.chartcontainer{
+  display: flex;
+  
+}
+.chartcontainer td{
+  justify-content: center; 
+  align-items: center; 
+
 }
