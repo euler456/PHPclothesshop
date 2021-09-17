@@ -163,6 +163,15 @@ class sqsuser
        return  $row;
        
     }
+    function otherdisplayproduct()
+    {
+        $sql = "SELECT * FROM products WHERE types='other'";
+        $stmt = $this->dbconn->prepare($sql);
+        $result= $stmt->execute();
+        $row = $stmt->fetchAll();
+       return  $row;
+       
+    }
     function sumtotalpriceff($CustomerID)
     {
         $sql = "UPDATE orderform SET totalprice = (SELECT SUM(price) FROM orderitem 
@@ -460,6 +469,22 @@ $sql = "INSERT INTO orderitem (productID,productname,price,size,orderID,image)  
 $stmt = $this->dbconn->prepare($sql);
 $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
 $stmt->bindParam(':size', $size, PDO::PARAM_STR);
+$stmt->bindParam(':productname', $productname, PDO::PARAM_STR);
+$stmt->bindParam(':price', $price, PDO::PARAM_INT);
+$stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+$stmt->bindParam(':image', $image, PDO::PARAM_STR);
+$result = $stmt->execute();
+if ($result === true) {
+    return true;
+} else {
+    return false;
+}
+}
+function orderotherProduct($productID,$productname,$price,$CustomerID,$image)
+{
+$sql = "INSERT INTO orderitem (productID,productname,price,orderID,image)  VALUES (:productID,:productname,:price,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ),:image);";
+$stmt = $this->dbconn->prepare($sql);
+$stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
 $stmt->bindParam(':productname', $productname, PDO::PARAM_STR);
 $stmt->bindParam(':price', $price, PDO::PARAM_INT);
 $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);

@@ -9,7 +9,18 @@ function closeNav() {
 function opencontent(evt, idlocate) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
-   
+   if(idlocate=="Register" || idlocate=="Home" ){
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(idlocate).style.display = "block";
+    evt.currentTarget.className += " active";
+   }
+   else{
     fetch('http://localhost/clothesshop/api/api.php?action=isloggedin', {
         method: 'POST',
         credentials: 'include'
@@ -20,7 +31,7 @@ function opencontent(evt, idlocate) {
            
         }
        
-        if (headers.status == 203) {
+        if (headers.status == 203 ) {
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
@@ -37,7 +48,7 @@ function opencontent(evt, idlocate) {
     .catch(function (error) {
         console.log(error)
     });
-  
+}
     
     
 }
@@ -72,6 +83,7 @@ function fetchlogin(evt) {
             if (headers.status == 201) {
                 mendisplay();
                 womendisplay();
+                otherdisplay();
                 fetchcreateorder();
                 opencontent(evt,'Mens');
              
@@ -135,7 +147,7 @@ function fetchregister(evt) {
         })
         .then(function (headers) {
             if (headers.status == 418) {
-                $("#target").removeClass('invisible');
+                $("#target").removeClass('d-none');
                 console.log('user exists');
                 
                 return;
@@ -175,7 +187,7 @@ fetch('http://localhost/clothesshop/api/api.php?action=mendisplay',
   <option value="M">M</option>
   <option value="L">L</option>
 </select><td>
-        <td><buttom class="order"  value="order">order</buttom></td>
+        <buttom class="order"  value="order">order</buttom>
         </tr>`;
     }
     document.querySelector('#Menproduct').innerHTML = output;
@@ -203,7 +215,7 @@ fetch('http://localhost/clothesshop/api/api.php?action=womendisplay',
   <option value="M">M</option>
   <option value="L">L</option>
 </select><td>
-<td><buttom class="order"  value="order">order</buttom></td>
+<buttom class="order"  value="order">order</buttom>
 </tr>`;
     }
     document.querySelector('#Womenproduct').innerHTML = output;
@@ -269,6 +281,64 @@ $(document).on('click', '.order', function(event) {
      
         if(headers.status == 201) {
             console.log('order succussful');
+            $(".ordersuccessalert").removeAttr("style");
+            $(".ordersuccessalert").removeClass('invisible');
+            return;
+        }
+       
+    })
+    .catch(function(error) {console.log(error)});
+    
+  });
+
+  function otherdisplay(){
+    fetch('http://localhost/clothesshop/api/api.php?action=otherdisplay',
+    {
+        method: 'POST',
+        credentials: 'include'
+    }
+    ).then((res)=>res.json())
+    .then(response=>{console.log(response);
+        let output = '';
+        for(let i in response){
+            output+=`<tr class="container">
+            <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
+            <td ><img  src='./images/${response[i].image }' style="width: 500px; height:400px;margin-top:20px;"></td>
+            <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
+            <td  class="pdname">${response[i].productname}</td>
+            <td class="pdprice">${response[i].price}</td>
+            <td><buttom class="orderother"  value="order">order</buttom></td>
+    </tr>`;
+        }
+        document.querySelector('#otherproduct').innerHTML = output;
+    }).catch(error=>console.error(error));
+    }
+$(document).on('click', '.orderother', function(event) {
+    var productname = $(this).closest('.container').find('.pdname').html();
+    var image = $(this).closest('.container').find('.pdimg').html();
+    var price = $(this).closest('.container').find('.pdprice').html();
+    var productid = $(this).closest('.container').find('.prdid').html();
+    var fd = new FormData();
+    fd.append('productID',productid );
+    fd.append('productname', productname );
+    fd.append('price', price );
+    fd.append('image', image );
+    fetch('http://localhost/clothesshop/api/api.php?action=orderotherproduct', 
+    {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
+    })
+    .then(function(headers) {
+        if(headers.status == 400) {
+            console.log('can not order');
+            return;
+        }
+     
+        if(headers.status == 201) {
+            console.log('order succussful');
+            $(".ordersuccessalert").removeAttr("style");
+            $(".ordersuccessalert").removeClass('invisible');
             return;
         }
        
@@ -449,4 +519,8 @@ function fetchcheckoutupdate() {
         .catch(function (error) {
             console.log(error)
         });
+}
+function alertreshow(){
+    
+    $(".ordersuccessalert").addClass('invisible').fadeOut();
 }

@@ -1,4 +1,4 @@
-body{
+h1,h2{
   font-family:fantasy;
 }
 #logo{
@@ -122,4 +122,10 @@ input[type="radio"] {
   justify-content: center; 
   align-items: center; 
 
+}
+.ordersuccessalert{
+  position:fixed;
+  width: 80%;
+    left:100px;
+    top:50px;
 }

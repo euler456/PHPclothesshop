@@ -5,7 +5,7 @@ require_once('../vendor/autoload.php');
 require_once('./se.php');
 require_once('./userfunction.php');
 
-//sqsuser is from the userfunction.php which represent database
+//sqsuser is from the userfunction.php which will represent database
 $sqsdb = new sqsuser;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -18,14 +18,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 $request = Request::createFromGlobals();
 $response = new Response();
 $session = new Session(new NativeSessionStorage(), new AttributeBag());
-/*$http_origin = $_SERVER['HTTP_ORIGIN'];
-if ( $http_origin == 'http://localhost/clothesshop/#')
+$http_origin = $_SERVER['HTTP_REFERER'];
+if ( $http_origin == 'http://localhost/clothesshop/')
 {
     $response->headers->set('Access-Control-Allow-Origin', $http_origin);
 }
 else{
     $response->setStatusCode(400);
-}*/
+}
 $response->headers->set('Content-Type', 'application/json');
 $response->headers->set('Access-Control-Allow-Headers', 'origin, content-type, accept');
 $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -225,6 +225,16 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 $response->setStatusCode(200);
             }
         } 
+        elseif ($request->query->getAlpha('action') == 'otherdisplay') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(403);
+            } elseif (count($res) == 1) {
+                $res = $session->get('sessionObj')->otherdisplay();
+                $response->setContent(json_encode($res));
+                $response->setStatusCode(200);
+            }
+        } 
         elseif ($request->query->getAlpha('action') == 'womendisplay') {
             $res = $session->get('sessionObj')->isLoggedIn();
             if ($res == false) {
@@ -282,6 +292,24 @@ elseif ($request->cookies->has('PHPSESSID')) {
             if ($res === true) {
                 $ip = $request->getClientIp();
                 $res =$session->get('sessionObj')->logEvent($ip,'order clothes',$request->cookies->get('PHPSESSID'));
+                $response->setStatusCode(201);
+            } elseif ($res === false) {
+                $response->setStatusCode(403);
+            } elseif ($res === 0) {
+                $response->setStatusCode(500);
+            }
+        } 
+        elseif ($request->query->getAlpha('action') == 'orderotherproduct') {
+            $res = $session->get('sessionObj')->orderotherproduct(
+                $request->request->get('productID'),
+                $request->request->get('productname'),
+                $request->request->get('price'),
+                $request->request->get('image')
+              
+            );
+            if ($res === true) {
+                $ip = $request->getClientIp();
+                $res =$session->get('sessionObj')->logEvent($ip,'order accessories',$request->cookies->get('PHPSESSID'));
                 $response->setStatusCode(201);
             } elseif ($res === false) {
                 $response->setStatusCode(403);

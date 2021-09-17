@@ -7,8 +7,10 @@
 <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
 <script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
   <script type="text/javascript" charset="utf-8" src="js.js" defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -20,6 +22,7 @@
     <a href="#" class="tablinks" onclick="opencontent(event, 'Homepage')">Home</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Mens')">Men</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Women')">Women</a>
+    <a href="#" class="tablinks" onclick="opencontent(event, 'others')">Others</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Myaccount')">Myaccount</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Mychart');orderchart();">Mychart</a>
     <a href="#" class="tablinks" onclick="opencontent(event, 'Contact')">Contact us</a>
@@ -42,16 +45,21 @@
         <p>
           <input class="btn" type="submit" value="Sing In" />
         </p>
-        <p>
-          <a href="#" class="tablinks" onclick="opencontent(event, 'Register')">Create an account.</a>
-        </p>
+       
       </form>
+      <p>
+        <button class="tablinks" onclick="opencontent(event, 'Register')">Create an account</button>
+      </p>
     </div>
     <div id="Homepage" class="tabcontent">
       <h2>Welcome to clothes shop</h2>
     </div>
     <div id="Mens" class="tabcontent">
       <h3>Mens</h3>
+      <div  class="alert alert-success invisible ordersuccessalert">
+        <button type="button" onclick="alertreshow()" class="close" >&times;</button>
+        order successful
+      </div>
       <form action="#" method="POST" >
         <table>
           
@@ -64,9 +72,28 @@
 
     <div id="Women" class="tabcontent">
       <h3>Women</h3>
+      <div  class="alert alert-success invisible ordersuccessalert">
+        <button type="button" onclick="alertreshow()" class="close" >&times;</button>
+        order successful
+      </div>
       <form action="#" method="POST" >
         <table>  
             <tbody class="tbody" id="Womenproduct">
+
+            </tbody>
+        </table>
+       </form>
+    </div>
+
+    <div id="others" class="tabcontent">
+      <h3>Women</h3>
+      <div  class="alert alert-success invisible ordersuccessalert">
+        <button type="button" onclick="alertreshow()" class="close" >&times;</button>
+        order successful
+      </div>
+      <form action="#" method="POST" >
+        <table>  
+            <tbody class="tbody" id="otherproduct">
 
             </tbody>
         </table>
@@ -95,7 +122,28 @@
         <button id="sumtotalprice" onclick="opencontent(event, 'payment');sumtotalpriceff();">confirmorder</button>
       </form>
     </div>
+    <div id="Contact us" class="tabcontent">
+      <h3>Contact us</h3>
+      <p></p>
+    </div>
 
+  
+    <div id="Register" class="tabcontent">
+      <div id="target" class="alert alert-danger fade-in is-paused toggle d-none" role="alert">Username exist</div>
+      <form action="#" method="POST" id="registerform">
+        <h1>registerform</h1>
+        <input class="form-control space" type="text" name="username" id="regusername" value="username" required>
+        <input class="form-control space" type="email" name="email" id="regemail" value="username@username" required>
+        <input class="form-control space" type="text" name="phone" id="regphone" value="1111111111" required>
+        <input  class="form-control space" type="number" name="postcode" id="regpostcode" value="1010" required>
+        <input class="form-control space" type="password" name="password" placeholder="password" id="regpassword" value="password" required>
+        <input  class="form-control space" type="password" name="password2" placeholder="password again" id="regpassword2" value="password"
+          required>
+        <input class="btn" type="submit" name="submit" onclick="">
+        
+      </form>
+      <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
+    </div>
     <div id="payment" class="tabcontent">
       <form action="#" method="POST">
         <h1>Your order</h1>
@@ -182,28 +230,7 @@
       </form>
     </div>
 
-    <div id="Contact us" class="tabcontent">
-      <h3>Contact us</h3>
-      <p></p>
-    </div>
-
-  
-    <div id="Register" class="tabcontent">
-      <div id="target" class="alert alert-danger fade-in is-paused toggle invisible" role="alert">Username exist</div>
-      <form action="#" method="POST" id="registerform">
-        <h1>registerform</h1>
-        <input class="form-control space" type="text" name="username" id="regusername" value="username" required>
-        <input class="form-control space" type="email" name="email" id="regemail" value="username@username" required>
-        <input class="form-control space" type="text" name="phone" id="regphone" value="1111111111" required>
-        <input  class="form-control space" type="number" name="postcode" id="regpostcode" value="1010" required>
-        <input class="form-control space" type="password" name="password" placeholder="password" id="regpassword" value="password" required>
-        <input  class="form-control space" type="password" name="password2" placeholder="password again" id="regpassword2" value="password"
-          required>
-        <input class="btn" type="submit" name="submit" onclick="">
-        
-      </form>
-      <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
-    </div>
+   
 
   </div>
 </body>

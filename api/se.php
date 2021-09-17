@@ -12,7 +12,7 @@ class sqsSession
     private $user_token;
     private $interval = 86400;
     private $limit = 1000;
-    private $count = 0;
+ 
     /*public function getClientIp() {
         $ipaddress = '';
         if (isset($_SERVER['HTTP_CLIENT_IP']))
@@ -192,6 +192,14 @@ class sqsSession
                         return false;
                     }
                 }
+    public function orderotherproduct($productID,$productname,$price,$image) {
+                    global $sqsdb;
+                        if($sqsdb->orderotherProduct($productID,$productname,$price,$this->CustomerID,$image)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
     public function updatefood($F_ID,$foodname,$price, $description,$options,$image) {
             global $sqsdb;
                     if($sqsdb->updatefooditem($F_ID,$foodname,$price,$description,$options,$image)) {
@@ -211,6 +219,12 @@ class sqsSession
     {
         global $sqsdb;
         $result=$sqsdb->womendisplayproduct();
+        return $result;
+    }
+    public function otherdisplay()
+    {
+        global $sqsdb;
+        $result=$sqsdb->otherdisplayproduct();
         return $result;
     }
     public function orderquantity($F_ID, $foodname, $price, $quantity, $totalprice)
