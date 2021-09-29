@@ -18,14 +18,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 $request = Request::createFromGlobals();
 $response = new Response();
 $session = new Session(new NativeSessionStorage(), new AttributeBag());
+/*
+if(isset($_SERVER['HTTP_REFERER'])) {
 $http_origin = $_SERVER['HTTP_REFERER'];
 if ( $http_origin == 'http://localhost/clothesshop/')
 {
     $response->headers->set('Access-Control-Allow-Origin', $http_origin);
-}
+}}
 else{
     $response->setStatusCode(400);
-}
+}*/
 $response->headers->set('Content-Type', 'application/json');
 $response->headers->set('Access-Control-Allow-Headers', 'origin, content-type, accept');
 $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -33,7 +35,7 @@ $response->headers->set('Access-Control-Allow-Origin', 'http://localhost/');
 $response->headers->set('Access-Control-Allow-Credentials', 'true');
 //put session here because here is the place the action started
 
-ini_set('session.cookie_samesite',"None");
+ini_set('session.cookie_samesite', "None");
 ini_set('session.cookie_secure', "1");
 $session->start();
 
@@ -42,19 +44,17 @@ if (!$session->has('sessionObj')) {
 }
 if (empty($request->query->all())) {
     $response->setStatusCode(400);
-} 
-elseif ($request->cookies->has('PHPSESSID')) {
-  
-   if ($session->get('sessionObj')->is_rate_limited()) {
+} elseif ($request->cookies->has('PHPSESSID')) {
+
+    if ($session->get('sessionObj')->is_rate_limited()) {
         //$response->setStatusCode(429);
     }
     if ($session->get('sessionObj')->day_rate_limited()) {
         $response->setStatusCode(429);
-
     }
     //if the request is post , the code will start the action which is in the POST Block
-    if ($request->getMethod() == 'POST') {  
-           // register
+    if ($request->getMethod() == 'POST') {
+        // register
         if ($request->query->getAlpha('action') == 'register') {
             if ($request->request->has('username')) {
                 $res = $sqsdb->userExists($request->request->get('username'));
@@ -69,11 +69,11 @@ elseif ($request->cookies->has('PHPSESSID')) {
                         $request->request->has('password') and
                         $request->request->has('password2')
                     ) {
-                        $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                        $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                        $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                        $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));
-                        $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
+                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
                         $res = $session->get('sessionObj')->register(
                             $username,
                             $email,
@@ -96,8 +96,8 @@ elseif ($request->cookies->has('PHPSESSID')) {
             }
         } elseif ($request->query->getAlpha('action') == 'login') {
             if ($request->request->has('username') and $request->request->has('password')) {
-                $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
+                $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
                 $res = $session->get('sessionObj')->login(
                     $username,
                     $password
@@ -112,7 +112,7 @@ elseif ($request->cookies->has('PHPSESSID')) {
                     $response->setStatusCode(201);
                     $response->setContent(json_encode($res));
                     $ip = $request->getClientIp();
-                    $res =$session->get('sessionObj')->logEvent( $ip,'login',$request->cookies->get('PHPSESSID'));
+                    $res = $session->get('sessionObj')->logEvent($ip, 'login', $request->cookies->get('PHPSESSID'));
                 }
             } else {
                 $response->setContent(json_encode($request));
@@ -128,7 +128,7 @@ elseif ($request->cookies->has('PHPSESSID')) {
             }
         } elseif ($request->query->getAlpha('action') == 'update') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent( $ip ,'update',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'update', $request->cookies->get('PHPSESSID'));
             $res = $session->get('sessionObj')->isLoggedIn();
             if (($request->request->has('username')) && (count($res) == 1)) {
                 $res = $sqsdb->userExists($request->request->get('username'));
@@ -145,11 +145,11 @@ elseif ($request->cookies->has('PHPSESSID')) {
                         $request->request->has('password') and
                         $request->request->has('password2')
                     ) {
-                        $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                        $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                        $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                        $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));
-                        $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
+                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
                         $res = $session->get('sessionObj')->update(
                             //    $res = $sqsdb->userid($request->request->get('currentusername')),
                             $username,
@@ -171,13 +171,28 @@ elseif ($request->cookies->has('PHPSESSID')) {
             } else {
                 $response->setStatusCode(402);
             }
-        } elseif ($request->query->getAlpha('action') == 'displayorderfood') {
-            $res = $session->get('sessionObj')->displayorder();
-            $response->setContent(json_encode($res));
-            $response->setStatusCode(200);
-        } elseif ($request->query->getAlpha('action') == 'orderdelete') {
+        } elseif ($request->query->getAlpha('action') == 'displayorder') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(400);
+            } else {
+                $res = $session->get('sessionObj')->displayorder();
+                $response->setContent(json_encode($res));
+                $response->setStatusCode(200);
+            }
+        } elseif ($request->query->getAlpha('action') == 'displayordercontent') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(400);
+            } else {
+                $res = $session->get('sessionObj')->displayordercontent();
+                $response->setContent(json_encode($res));
+                $response->setStatusCode(200);
+            }
+        }
+        elseif ($request->query->getAlpha('action') == 'orderdelete') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent($ip ,'orderdelete',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'orderdelete', $request->cookies->get('PHPSESSID'));
             $res = $session->get('sessionObj')->orderdelete(
                 $request->request->get('orderitem_ID')
             );
@@ -188,9 +203,11 @@ elseif ($request->cookies->has('PHPSESSID')) {
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
-        } elseif ($request->query->getAlpha('action') == 'orderquantity') {
+        } 
+     
+        elseif ($request->query->getAlpha('action') == 'orderquantity') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent($ip,'orderfood',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'orderfood', $request->cookies->get('PHPSESSID'));
             if (
                 $request->request->has('F_ID') and
                 $request->request->has('foodname') and
@@ -224,8 +241,7 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 $response->setContent(json_encode($res));
                 $response->setStatusCode(200);
             }
-        } 
-        elseif ($request->query->getAlpha('action') == 'otherdisplay') {
+        } elseif ($request->query->getAlpha('action') == 'otherdisplay') {
             $res = $session->get('sessionObj')->isLoggedIn();
             if ($res == false) {
                 $response->setStatusCode(403);
@@ -234,8 +250,16 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 $response->setContent(json_encode($res));
                 $response->setStatusCode(200);
             }
-        } 
-        elseif ($request->query->getAlpha('action') == 'womendisplay') {
+        } elseif ($request->query->getAlpha('action') == 'displayproduct') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(403);
+            } elseif (count($res) == 1) {
+                $res = $session->get('sessionObj')->displayproduct();
+                $response->setContent(json_encode($res));
+                $response->setStatusCode(200);
+            }
+        } elseif ($request->query->getAlpha('action') == 'womendisplay') {
             $res = $session->get('sessionObj')->isLoggedIn();
             if ($res == false) {
                 $response->setStatusCode(403);
@@ -244,29 +268,26 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 $response->setContent(json_encode($res));
                 $response->setStatusCode(200);
             }
-        } 
-        elseif ($request->query->getAlpha('action') == 'addfood') {
+        } elseif ($request->query->getAlpha('action') == 'addproduct') {
+
             if (
-                $request->request->has('foodname') and
+                $request->request->has('productname') and
                 $request->request->has('price')   and
-                $request->request->has('description') and
-                $request->request->has('image') and
-                $request->request->has('options')
+                $request->request->has('types') and
+                $request->request->has('image')
             ) {
                 $response->setStatusCode(201);
                 $ip = $request->getClientIp();
-                $res =$session->get('sessionObj')->adminlogEvent($ip,'addfood',$request->cookies->get('PHPSESSID'));
-                $foodname=$session->get('sessionObj')->input_testing($request->request->get('foodname'));
-                $price=$session->get('sessionObj')->input_testing($request->request->get('price'));
-                $description=$session->get('sessionObj')->input_testing($request->request->get('description'));
-                $options=$session->get('sessionObj')->input_testing($request->request->get('options'));                $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                $image=$session->get('sessionObj')->input_testing($request->request->get('image'));
+                $res = $session->get('sessionObj')->adminlogEvent($ip, 'createproduct', $request->cookies->get('PHPSESSID'));
+                $productname = $session->get('sessionObj')->input_testing($request->request->get('productname'));
+                $price = $session->get('sessionObj')->input_testing($request->request->get('price'));
+                $types = $session->get('sessionObj')->input_testing($request->request->get('types'));
+                $image = $session->get('sessionObj')->input_testing($request->request->get('image'));
 
-                $res = $session->get('sessionObj')->addfood(
-                    $foodname,
+                $res = $session->get('sessionObj')->addproduct(
+                    $productname,
                     $price,
-                    $description,
-                    $options,
+                    $types,
                     $image
                 );
                 if ($res === true) {
@@ -279,91 +300,98 @@ elseif ($request->cookies->has('PHPSESSID')) {
             } else {
                 $response->setStatusCode(400);
             }
-        }
-        elseif ($request->query->getAlpha('action') == 'orderproduct') {
+        } elseif ($request->query->getAlpha('action') == 'orderproduct') {
             $res = $session->get('sessionObj')->orderproduct(
                 $request->request->get('productID'),
                 $request->request->get('productname'),
                 $request->request->get('price'),
                 $request->request->get('size'),
                 $request->request->get('image')
-              
+
             );
             if ($res === true) {
                 $ip = $request->getClientIp();
-                $res =$session->get('sessionObj')->logEvent($ip,'order clothes',$request->cookies->get('PHPSESSID'));
+                $res = $session->get('sessionObj')->logEvent($ip, 'order clothes', $request->cookies->get('PHPSESSID'));
                 $response->setStatusCode(201);
             } elseif ($res === false) {
                 $response->setStatusCode(403);
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
-        } 
-        elseif ($request->query->getAlpha('action') == 'orderotherproduct') {
+        } elseif ($request->query->getAlpha('action') == 'orderotherproduct') {
             $res = $session->get('sessionObj')->orderotherproduct(
                 $request->request->get('productID'),
                 $request->request->get('productname'),
                 $request->request->get('price'),
                 $request->request->get('image')
-              
+
             );
             if ($res === true) {
                 $ip = $request->getClientIp();
-                $res =$session->get('sessionObj')->logEvent($ip,'order accessories',$request->cookies->get('PHPSESSID'));
+                $res = $session->get('sessionObj')->logEvent($ip, 'order accessories', $request->cookies->get('PHPSESSID'));
                 $response->setStatusCode(201);
             } elseif ($res === false) {
                 $response->setStatusCode(403);
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
-        } 
-         elseif ($request->query->getAlpha('action') == 'deleteFOOD') {
-            $res = $session->get('sessionObj')->deleteFOOD(
-                $request->request->get('F_ID')
+        } elseif ($request->query->getAlpha('action') == 'deleteProduct') {
+            $res = $session->get('sessionObj')->deleteProduct(
+                $request->request->get('productID')
             );
             if ($res === true) {
                 $ip = $request->getClientIp();
-                $res =$session->get('sessionObj')->adminlogEvent(  $ip,'delete food',$request->cookies->get('PHPSESSID'));
+                $res = $session->get('sessionObj')->adminlogEvent($ip, 'delete product', $request->cookies->get('PHPSESSID'));
                 $response->setStatusCode(201);
             } elseif ($res === false) {
                 $response->setStatusCode(403);
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
-        } elseif ($request->query->getAlpha('action') == 'updatefood') {
+        }
+        elseif ($request->query->getAlpha('action') == 'deleteOrder') {
+            $res = $session->get('sessionObj')->deleteOrder(
+                $request->request->get('orderID')
+            );
+            if ($res === true) {
+                $ip = $request->getClientIp();
+                $res = $session->get('sessionObj')->adminlogEvent($ip, 'delete orderID', $request->cookies->get('PHPSESSID'));
+                $response->setStatusCode(201);
+            } elseif ($res === false) {
+                $response->setStatusCode(403);
+            } elseif ($res === 0) {
+                $response->setStatusCode(500);
+            }
+        }
+         elseif ($request->query->getAlpha('action') == 'updateproduct') {
             if (
-                $request->request->has('F_ID') and
-                $request->request->has('foodname') and
+                $request->request->has('productID') and
+                $request->request->has('productname') and
                 $request->request->has('price')   and
-                $request->request->has('description') and
-                $request->request->has('image') and
-                $request->request->has('options')
+                $request->request->has('types') and
+                $request->request->has('image')
             ) {
-                $F_ID=$session->get('sessionObj')->input_testing($request->request->get('F_ID'));
-                $foodname=$session->get('sessionObj')->input_testing($request->request->get('foodname'));
-                $price=$session->get('sessionObj')->input_testing($request->request->get('price'));
-                $description=$session->get('sessionObj')->input_testing($request->request->get('description'));
-                $options=$session->get('sessionObj')->input_testing($request->request->get('options'));                $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                $image=$session->get('sessionObj')->input_testing($request->request->get('image'));
-                $res = $session->get('sessionObj')->updatefood(
-                    $F_ID,
-                    $foodname,
+                $productID = $session->get('sessionObj')->input_testing($request->request->get('productID'));
+                $productname = $session->get('sessionObj')->input_testing($request->request->get('productname'));
+                $price = $session->get('sessionObj')->input_testing($request->request->get('price'));
+                $types = $session->get('sessionObj')->input_testing($request->request->get('types'));
+                $image = $session->get('sessionObj')->input_testing($request->request->get('image'));
+                $res = $session->get('sessionObj')->updateproduct(
+                    $productID,
+                    $productname,
                     $price,
-                    $description,
-                    $options,
+                    $types,
                     $image
                 );
                 if ($res === true) {
                     $ip = $request->getClientIp();
-                    $res =$session->get('sessionObj')->adminlogEvent(  $ip ,'update food',$request->cookies->get('PHPSESSID'));
+                    $res = $session->get('sessionObj')->adminlogEvent($ip, 'update product', $request->cookies->get('PHPSESSID'));
                     $response->setStatusCode(201);
                 } elseif ($res === false) {
                     $response->setStatusCode(403);
                 } elseif ($res === 0) {
                     $response->setStatusCode(500);
                 }
-            } else {
-                $response->setStatusCode(400);
             }
         } elseif ($request->query->getAlpha('action') == 'createorder') {
             $res = $session->get('sessionObj')->isLoggedIn();
@@ -374,7 +402,7 @@ elseif ($request->cookies->has('PHPSESSID')) {
                 if ($res === true) {
                     $response->setStatusCode(201);
                     $ip = $request->getClientIp();
-                    $res =$session->get('sessionObj')->logEvent( $ip ,'start order',$request->cookies->get('PHPSESSID'));
+                    $res = $session->get('sessionObj')->logEvent($ip, 'start order', $request->cookies->get('PHPSESSID'));
                 } elseif ($res === false) {
                     $response->setStatusCode(403);
                 } elseif ($res === 0) {
@@ -385,11 +413,11 @@ elseif ($request->cookies->has('PHPSESSID')) {
             }
         } elseif ($request->query->getAlpha('action') == 'checkout') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent($ip ,'checkout',$request->cookies->get('PHPSESSID'));
-            $cname=$session->get('sessionObj')->input_testing($request->request->get('cname'));
-            $ccnum=$session->get('sessionObj')->input_testing($request->request->get('ccnum'));
-            $expmonth=$session->get('sessionObj')->input_testing($request->request->get('expmonth'));
-            $cvv=$session->get('sessionObj')->input_testing($request->request->get('cvv'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'checkout', $request->cookies->get('PHPSESSID'));
+            $cname = $session->get('sessionObj')->input_testing($request->request->get('cname'));
+            $ccnum = $session->get('sessionObj')->input_testing($request->request->get('ccnum'));
+            $expmonth = $session->get('sessionObj')->input_testing($request->request->get('expmonth'));
+            $cvv = $session->get('sessionObj')->input_testing($request->request->get('cvv'));
             $res = $session->get('sessionObj')->checkout(
                 $cname,
                 $ccnum,
@@ -413,143 +441,213 @@ elseif ($request->cookies->has('PHPSESSID')) {
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
-
         }  //==========admin==================
         elseif ($request->query->getAlpha('action') == 'registeradmin') {
-           if ($request->request->has('username')) {
-               $res = $sqsdb->userExists($request->request->get('username'));
-               if ($res) {
-                   $response->setStatusCode(418);
-               } else {
-                   if (
-                       $request->request->has('username') and
-                       $request->request->has('email') and
-                       $request->request->has('phone') and
-                       $request->request->has('postcode') and
-                       $request->request->has('password') and
-                       $request->request->has('password2')
-                   ) {
-                    $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                    $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                    $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                    $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));
-                    $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                       $res = $session->get('sessionObj')->registeradmin(
-                           $username,
-                           $email,
-                           $phone,
-                           $postcode,
-                           $password,
-                           $csrf
-                       );
-                       if ($res === true) {
-                           $response->setStatusCode(201);
-                       } elseif ($res === false) {
-                           $response->setStatusCode(403);
-                       } elseif ($res === 0) {
-                           $response->setStatusCode(500);
-                       }
-                   }
-               }
-           } else {
-               $response->setStatusCode(400);
-           }
-       } elseif ($request->query->getAlpha('action') == 'adminlogin') {
-           if ($request->request->has('username') and $request->request->has('password')) {
-               $res = $session->get('sessionObj')->adminlogin(
-                   $request->request->get('username'),
-                   $request->request->get('password')
-               );
-               if ($res === false) {
-                   $response->setContent(json_encode($request->request));
-                   $response->setStatusCode(401);
-               } elseif (count($res) == 1) {
-                   $response->setStatusCode(203);
-                   $response->setContent(json_encode($res));
-               } elseif (count($res) > 1) {
-                $ip = $request->getClientIp();
-                   $res =$session->get('sessionObj')->adminlogEvent($ip ,'admin login',$request->cookies->get('PHPSESSID'));
-                   $response->setStatusCode(200);
-                   $response->setContent(json_encode($res));
-               }
-           } else {
-               $response->setContent(json_encode($request));
-               $response->setStatusCode(404);
-           }
-       } elseif ($request->query->getAlpha('action') == 'adminupdate') {
-           $res = $session->get('sessionObj')->isLoggedIn();
-           if (($request->request->has('username')) && ($res != false)) {
-               $res = $sqsdb->userExists($request->request->get('username'));
-               if ($res) {
-                   $response->setStatusCode(400);
-               } else {
-                   if (
-                       $request->request->has('currentusername') and
-                       $request->request->has('username') and
-                       $request->request->has('email') and
-                       $request->request->has('phone') and
-                       $request->request->has('postcode') and
-                       $request->request->has('password') and
-                       $request->request->has('password2')
-                   ) {
-                    $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                    $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                    $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                    $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));
-                    $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                       $res = $session->get('sessionObj')->adminupdate(
-                           //    $res = $sqsdb->userid($request->request->get('currentusername')),
-                           $username,
-                           $email,
-                           $phone,
-                           $postcode,
-                           $password,
-                           $csrf
-                       );
-                       if ($res === true) {
-                        $ip = $request->getClientIp();
-                           $res =$session->get('sessionObj')->adminlogEvent( $ip,'edit profile',$request->cookies->get('PHPSESSID'));
-                           $response->setStatusCode(201);
-                       } elseif ($res === false) {
-                           $response->setStatusCode(403);
-                       } elseif ($res === 0) {
-                           $response->setStatusCode(500);
-                       }
-                   }
-               }
-            }
-            
-            }
-            elseif ($request->query->getAlpha('action') == 'displayuser') {
-                $res = $session->get('sessionObj')->isLoggedIn();
-                if ($res == false) {
-                    $response->setStatusCode(400);}
-                    else{
-                    $res = $session->get('sessionObj')->displayuser();
-                    $response->setContent(json_encode($res));
-            $response->setStatusCode(200);
-                } 
-            } elseif ($request->query->getAlpha('action') == 'adduser') {
-                $res = $session->get('sessionObj')->isLoggedIn();
-                if ($res == false) {
-                    $response->setStatusCode(400);}
-                    else{
+            if ($request->request->has('username')) {
+                $res = $sqsdb->userExists($request->request->get('username'));
+                if ($res) {
+                    $response->setStatusCode(418);
+                } else {
                     if (
                         $request->request->has('username') and
                         $request->request->has('email') and
                         $request->request->has('phone') and
                         $request->request->has('postcode') and
                         $request->request->has('password') and
-                        $request->request->has('usertype')
-                    ){
-                        $response->setStatusCode(201);
-                        $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                        $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                        $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                        $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));    
-                        $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                        $usertype=$session->get('sessionObj')->input_testing($request->request->get('usertype'));
-                        $res = $session->get('sessionObj')->adduser(
+                        $request->request->has('password2')
+                    ) {
+                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
+                        $res = $session->get('sessionObj')->registeradmin(
+                            $username,
+                            $email,
+                            $phone,
+                            $postcode,
+                            $password,
+                            $csrf
+                        );
+                        if ($res === true) {
+                            $response->setStatusCode(201);
+                        } elseif ($res === false) {
+                            $response->setStatusCode(403);
+                        } elseif ($res === 0) {
+                            $response->setStatusCode(500);
+                        }
+                    }
+                }
+            } else {
+                $response->setStatusCode(400);
+            }
+        } elseif ($request->query->getAlpha('action') == 'adminlogin') {
+            if ($request->request->has('username') and $request->request->has('password')) {
+                $res = $session->get('sessionObj')->adminlogin(
+                    $request->request->get('username'),
+                    $request->request->get('password')
+                );
+                if ($res === false) {
+                    $response->setContent(json_encode($request->request));
+                    $response->setStatusCode(401);
+                } elseif (count($res) == 1) {
+                    $response->setStatusCode(203);
+                    $response->setContent(json_encode($res));
+                } elseif (count($res) > 1) {
+                    $ip = $request->getClientIp();
+                    $res = $session->get('sessionObj')->adminlogEvent($ip, 'admin login', $request->cookies->get('PHPSESSID'));
+                    $response->setStatusCode(200);
+                    $response->setContent(json_encode($res));
+                }
+            } else {
+                $response->setContent(json_encode($request));
+                $response->setStatusCode(404);
+            }
+        } elseif ($request->query->getAlpha('action') == 'adminupdate') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if (($request->request->has('username')) && ($res != false)) {
+                $res = $sqsdb->userExists($request->request->get('username'));
+                if ($res) {
+                    $response->setStatusCode(400);
+                } else {
+                    if (
+                        $request->request->has('currentusername') and
+                        $request->request->has('username') and
+                        $request->request->has('email') and
+                        $request->request->has('phone') and
+                        $request->request->has('postcode') and
+                        $request->request->has('password') and
+                        $request->request->has('password2')
+                    ) {
+                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
+                        $res = $session->get('sessionObj')->adminupdate(
+                            //    $res = $sqsdb->userid($request->request->get('currentusername')),
+                            $username,
+                            $email,
+                            $phone,
+                            $postcode,
+                            $password,
+                            $csrf
+                        );
+                        if ($res === true) {
+                            $ip = $request->getClientIp();
+                            $res = $session->get('sessionObj')->adminlogEvent($ip, 'edit profile', $request->cookies->get('PHPSESSID'));
+                            $response->setStatusCode(201);
+                        } elseif ($res === false) {
+                            $response->setStatusCode(403);
+                        } elseif ($res === 0) {
+                            $response->setStatusCode(500);
+                        }
+                    }
+                }
+            }
+        } elseif ($request->query->getAlpha('action') == 'adminadduser') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(400);
+            } else {
+                if ($request->request->has('username')) {
+                    $res = $sqsdb->userExists($request->request->get('username'));
+                    if ($res) {
+                        $response->setStatusCode(418);
+                    } else {
+                        if (
+                            $request->request->has('username') and
+                            $request->request->has('email') and
+                            $request->request->has('phone') and
+                            $request->request->has('postcode') and
+                            $request->request->has('password') and
+                            $request->request->has('usertypes')
+                        ) {
+                            $response->setStatusCode(201);
+                            $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                            $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                            $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                            $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                            $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
+                            $usertype = $session->get('sessionObj')->input_testing($request->request->get('usertypes'));
+                            $res = $session->get('sessionObj')->adduser(
+                                $username,
+                                $email,
+                                $phone,
+                                $postcode,
+                                $password,
+                                $usertype
+                            );
+                            if ($res === true) {
+                                $ip = $request->getClientIp();
+                                $res = $session->get('sessionObj')->adminlogEvent($ip, 'adduser', $request->cookies->get('PHPSESSID'));
+                                $response->setStatusCode(201);
+                            } elseif ($res === false) {
+                                $response->setStatusCode(403);
+                            } elseif ($res === 0) {
+                                $response->setStatusCode(500);
+                            }
+                        }
+                    }
+                } else {
+                    $response->setStatusCode(400);
+                }
+            }
+        } elseif ($request->query->getAlpha('action') == 'displayuser') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res == false) {
+                $response->setStatusCode(400);
+            } else {
+                $res = $session->get('sessionObj')->displayuser();
+                $response->setContent(json_encode($res));
+                $response->setStatusCode(200);
+            }
+        } elseif ($request->query->getAlpha('action') == 'deleteuser') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res === false) {
+                $response->setStatusCode(400);
+            } else {
+                $res = $session->get('sessionObj')->deleteuser(
+                    $request->request->get('CustomerID')
+                );
+                if ($res === true) {
+                    $ip = $request->getClientIp();
+                    $res = $session->get('sessionObj')->adminlogEvent($ip, 'delete user', $request->cookies->get('PHPSESSID'));
+                    $response->setStatusCode(201);
+                } elseif ($res === false) {
+                    $response->setStatusCode(403);
+                } elseif ($res === 0) {
+                    $response->setStatusCode(500);
+                }
+            }
+        } elseif ($request->query->getAlpha('action') == 'updateuser') {
+            $res = $session->get('sessionObj')->isLoggedIn();
+            if ($res === false) {
+                $response->setStatusCode(400);
+            } else {
+                if ($request->request->has('username')) {
+                    $res = $sqsdb->userExists($request->request->get('username'));
+                    if ($res) {
+                        $response->setStatusCode(418);
+                    }
+                } else {
+                    if (
+                        $request->request->has('CustomerID') and
+                        $request->request->has('username') and
+                        $request->request->has('email') and
+                        $request->request->has('phone') and
+                        $request->request->has('postcode') and
+                        $request->request->has('password') and
+                        $request->request->has('usertypes')
+                    ) {
+                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
+                        $usertype = $session->get('sessionObj')->input_testing($request->request->get('usertypes'));
+                        $res = $session->get('sessionObj')->updateuser(
+                            $request->request->get('CustomerID'),
                             $username,
                             $email,
                             $phone,
@@ -558,9 +656,9 @@ elseif ($request->cookies->has('PHPSESSID')) {
                             $usertype
                         );
                         if ($res === true) {
-                            $ip = $request->getClientIp();
-                            $res =$session->get('sessionObj')->adminlogEvent($ip,'adduser',$request->cookies->get('PHPSESSID'));
                             $response->setStatusCode(201);
+                            $ip = $request->getClientIp();
+                            $res = $session->get('sessionObj')->adminlogEvent($ip, 'update user', $request->cookies->get('PHPSESSID'));
                         } elseif ($res === false) {
                             $response->setStatusCode(403);
                         } elseif ($res === 0) {
@@ -569,74 +667,12 @@ elseif ($request->cookies->has('PHPSESSID')) {
                     } else {
                         $response->setStatusCode(400);
                     }
-                } 
-            } elseif ($request->query->getAlpha('action') == 'deleteuser') {
-                $res = $session->get('sessionObj')->isLoggedIn();
-                if ($res === false) {
-                    $response->setStatusCode(400);}
-                    else{
-                    $res = $session->get('sessionObj')->deleteuser(
-                        $request->request->get('CustomerID')
-                    );
-                    if ($res === true) {
-                        $ip = $request->getClientIp();
-                        $res =$session->get('sessionObj')->adminlogEvent( $ip,'delete user',$request->cookies->get('PHPSESSID'));
-                        $response->setStatusCode(201);
-                    } elseif ($res === false) {
-                        $response->setStatusCode(403);
-                    } elseif ($res === 0) {
-                        $response->setStatusCode(500);
-                    }
-                } 
-            } elseif ($request->query->getAlpha('action') == 'updateuser') {
-                $res = $session->get('sessionObj')->isLoggedIn();
-                if ($res === false) {
-                    $response->setStatusCode(400);}
-                    else{
-                    if (
-                        $request->request->has('CustomerID') and
-                        $request->request->has('username') and
-                        $request->request->has('email') and
-                        $request->request->has('phone') and
-                        $request->request->has('postcode') and
-                        $request->request->has('password') and 
-                        $request->request->has('usertype')
-                    ) {
-                        $username=$session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                        $email=$session->get('sessionObj')->input_testing($request->request->get('email'));
-                        $phone=$session->get('sessionObj')->input_testing($request->request->get('phone'));
-                        $postcode=$session->get('sessionObj')->input_testing($request->request->get('postcode'));    
-                        $password=$session->get('sessionObj')->input_testing($request->request->get('password'));
-                        $usertype=$session->get('sessionObj')->input_testing($request->request->get('usertype'));
-                        $res = $session->get('sessionObj')->updateuser(
-                            $request->request->get('CustomerID'),
-                            $username,                                
-                            $email,
-                                $phone,
-                                $postcode,
-                                $password,
-                                $usertype
-                        );
-                        if ($res === true) {
-                            $response->setStatusCode(201);
-                            $ip = $request->getClientIp();
-                            $res =$session->get('sessionObj')->adminlogEvent($ip,'update user',$request->cookies->get('PHPSESSID'));
-                        } elseif ($res === false) {
-                            $response->setStatusCode(403);
-                        } elseif ($res === 0) {
-                            $response->setStatusCode(500);
-                        }
-                    } else {
-                        $response->setStatusCode(400);
-                    }
-                } 
+                }
             }
-        else {
-            $response->setStatusCode(400);
         }
     }
     //if the request from the front-end JS is GET , the code will start the action which is in the GET Block
-    if ($request->getMethod() == 'GET') {     
+    if ($request->getMethod() == 'GET') {
         if ($request->query->getAlpha('action') == 'accountexists') {
             if ($request->query->has('username')) {
                 $res = $sqsdb->userExists($request->query->get('username'));
@@ -648,23 +684,19 @@ elseif ($request->cookies->has('PHPSESSID')) {
             }
         } elseif ($request->query->getAlpha('action') == 'logout') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent( $ip,'logout',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'logout', $request->cookies->get('PHPSESSID'));
             $response->setStatusCode(200);
             $session->get('sessionObj')->logout();
-           
-        } 
-        elseif ($request->query->getAlpha('action') == 'adminlogout') {
+        } elseif ($request->query->getAlpha('action') == 'adminlogout') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->adminlogEvent( $ip,'logout',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->adminlogEvent($ip, 'logout', $request->cookies->get('PHPSESSID'));
             $session->get('sessionObj')->logout();
             $response->setStatusCode(200);
-           
-        }
-        elseif ($request->query->getAlpha('action') == 'orderID') {
+        } elseif ($request->query->getAlpha('action') == 'orderID') {
             $res = $session->get('sessionObj')->orderID();
         } elseif ($request->query->getAlpha('action') == 'sumtotalprice') {
             $ip = $request->getClientIp();
-            $res =$session->get('sessionObj')->logEvent( $ip ,'complete order',$request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->logEvent($ip, 'complete order', $request->cookies->get('PHPSESSID'));
             $res = $session->get('sessionObj')->sumtotalprice();
             if ($res === true) {
                 $response->setStatusCode(201);

@@ -4,7 +4,7 @@ class sqsSession
 {
     //========================userfunction============================
     private $last_visit = 0;
-    private $all_visit = Array();
+    private $all_visit = array();
     private $CustomerID = 0;
     private $username;
     private $email;
@@ -12,7 +12,7 @@ class sqsSession
     private $user_token;
     private $interval = 86400;
     private $limit = 1000;
- 
+
     /*public function getClientIp() {
         $ipaddress = '';
         if (isset($_SERVER['HTTP_CLIENT_IP']))
@@ -31,7 +31,7 @@ class sqsSession
             $ipaddress = 'UNKNOWN';
         return $ipaddress;
     }*/
-    
+
     public function input_testing($data)
     {
         $data = trim($data);
@@ -49,25 +49,24 @@ class sqsSession
             $this->last_visit = time();
             return false;
         }
-        if ($this->last_visit <= time()-1) {
+        if ($this->last_visit <= time() - 1) {
             return true;
         }
         return false;
     }
     public function day_rate_limited()
     {
-        $this->oneday =time()- $this->interval;
-        $this->all_visit[]=$this->last_visit;
-        foreach($this->all_visit as $times){
-            if($times < $this->oneday){
-                $key = array_search($times,$this->all_visit);
-                array_splice($this->all_visit,$key);
+        $this->oneday = time() - $this->interval;
+        $this->all_visit[] = $this->last_visit;
+        foreach ($this->all_visit as $times) {
+            if ($times < $this->oneday) {
+                $key = array_search($times, $this->all_visit);
+                array_splice($this->all_visit, $key);
             }
         }
-        if(count($this->all_visit)> $this->limit){
+        if (count($this->all_visit) > $this->limit) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
         /*  $now = time();
@@ -108,7 +107,7 @@ class sqsSession
     public function register($username, $email, $phone, $postcode, $password, $csrf)
     {
         global $sqsdb;
-        if ($sqsdb->registerUser( $username,  $email, $phone, $postcode, $password)) {
+        if ($sqsdb->registerUser($username,  $email, $phone, $postcode, $password)) {
             return true;
         } else {
             return 0;
@@ -123,11 +122,11 @@ class sqsSession
             return 0;
         }
     }
-    public function logEvent($ip_addr,$action,$PHPSESSID)
+    public function logEvent($ip_addr, $action, $PHPSESSID)
     {
 
         global $sqsdb;
-        if ($sqsdb->logevent($this->CustomerID, $ip_addr,$action,$PHPSESSID)) {
+        if ($sqsdb->logevent($this->CustomerID, $ip_addr, $action, $PHPSESSID)) {
             return true;
         } else {
             return 0;
@@ -148,16 +147,11 @@ class sqsSession
     public function validate($type, $dirty_string)
     {
     }
-   
+
 
     //===========================productfunction================================================
-    public function display()
-    {
-        global $sqsdb;
-        $result=$sqsdb->displayfood();
-        return $result;
-    }
-   
+
+
     public function createorder()
     {
         global $sqsdb;
@@ -168,63 +162,74 @@ class sqsSession
         }
     }
     //==================admin food control============
-    public function addfood($foodname,$price, $description,$options,$image) {
+    public function addproduct($productname, $price, $types, $image)
+    {
         global $sqsdb;
-            if($sqsdb->addfooditem($foodname,$price,$description,$options,$image)) {
-                return true;
-            } else {
-                return false;
-            }
+        if ($sqsdb->addproductditem($productname, $price, $types, $image)) {
+            return true;
+        } else {
+            return false;
         }
-    public function deleteFOOD($F_ID) {
-            global $sqsdb;
-                if($sqsdb->deletefood($F_ID)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-    public function orderproduct($productID,$productname,$price,$size,$image) {
-                global $sqsdb;
-                    if($sqsdb->orderProduct($productID,$productname,$price,$size,$this->CustomerID,$image)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-    public function orderotherproduct($productID,$productname,$price,$image) {
-                    global $sqsdb;
-                        if($sqsdb->orderotherProduct($productID,$productname,$price,$this->CustomerID,$image)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-    public function updatefood($F_ID,$foodname,$price, $description,$options,$image) {
-            global $sqsdb;
-                    if($sqsdb->updatefooditem($F_ID,$foodname,$price,$description,$options,$image)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
+    }
+    public function deleteProduct($productID)
+    {
+        global $sqsdb;
+        if ($sqsdb->deleteproduct($productID)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function orderproduct($productID, $productname, $price, $size, $image)
+    {
+        global $sqsdb;
+        if ($sqsdb->orderProduct($productID, $productname, $price, $size, $this->CustomerID, $image)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function orderotherproduct($productID, $productname, $price, $image)
+    {
+        global $sqsdb;
+        if ($sqsdb->orderotherProduct($productID, $productname, $price, $this->CustomerID, $image)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function updateproduct($productID, $productname, $price, $types, $image)
+    {
+        global $sqsdb;
+        if ($sqsdb->updateproductitem($productID, $productname, $price, $types, $image)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     //====================orderfunction===============================
     public function mendisplay()
     {
         global $sqsdb;
-        $result=$sqsdb->mendisplayproduct();
+        $result = $sqsdb->mendisplayproduct();
+        return $result;
+    }
+    public function displayproduct()
+    {
+        global $sqsdb;
+        $result = $sqsdb->displayProduct();
         return $result;
     }
     public function womendisplay()
     {
         global $sqsdb;
-        $result=$sqsdb->womendisplayproduct();
+        $result = $sqsdb->womendisplayproduct();
         return $result;
     }
     public function otherdisplay()
     {
         global $sqsdb;
-        $result=$sqsdb->otherdisplayproduct();
+        $result = $sqsdb->otherdisplayproduct();
         return $result;
     }
     public function orderquantity($F_ID, $foodname, $price, $quantity, $totalprice)
@@ -239,8 +244,8 @@ class sqsSession
     public function showorderform()
     {
         global $sqsdb;
-      //  $sqsdb->displayshoworderform($this->CustomerID);
-        $result=$sqsdb->displayshoworderform($this->CustomerID);
+        //  $sqsdb->displayshoworderform($this->CustomerID);
+        $result = $sqsdb->displayshoworderform($this->CustomerID);
         return $result;
     }
     public function orderdelete($orderitem_ID)
@@ -248,6 +253,20 @@ class sqsSession
         global $sqsdb;
         if ($sqsdb->deleteorderfood($orderitem_ID)) {
             return true;
+        } else {
+            return false;
+        }
+    }
+    public function deleteOrder($orderID)
+    {
+        global $sqsdb;
+        if ($sqsdb->deleteorder($orderID)) {
+            if($sqsdb->deleteoorder($orderID)){
+                return true;
+            }
+            else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -262,8 +281,8 @@ class sqsSession
     public function confirmorderform()
     {
         global $sqsdb;
-     
-        $result=$sqsdb->getconfirmorderform($this->CustomerID);
+
+        $result = $sqsdb->getconfirmorderform($this->CustomerID);
         return $result;
     }
     public function sumtotalprice()
@@ -295,92 +314,104 @@ class sqsSession
         }
         return $sqsdb;
     }
-   
-//=============admin
+
+    //=============admin
 
 
-public function adminlogin($username, $password)
-{
-    global $sqsdb;
+    public function adminlogin($username, $password)
+    {
+        global $sqsdb;
 
-    $res = $sqsdb->admincheckLogin($username, $password);
-    if ($res === false) {
-        return false;
-    } elseif (count($res) > 1) {
-        $this->CustomerID = $res['CustomerID'];
-        $this->user_token = md5(json_encode($res));
-        return array(
-            'username' => $res['username'],
-            'email' => $res['email'],
-            'phone' => $res['phone'],
-            'usertype' => $res['usertype'],
-            'Hash' => $this->user_token
-        );
-    } elseif (count($res) == 1) {
-        $this->CustomerID = $res['CustomerID'];
-        $this->user_token = md5(json_encode($res));
-        return array('Hash' => $this->user_token);
+        $res = $sqsdb->admincheckLogin($username, $password);
+        if ($res === false) {
+            return false;
+        } elseif (count($res) > 1) {
+            $this->CustomerID = $res['CustomerID'];
+            $this->user_token = md5(json_encode($res));
+            return array(
+                'username' => $res['username'],
+                'email' => $res['email'],
+                'phone' => $res['phone'],
+                'usertype' => $res['usertype'],
+                'Hash' => $this->user_token
+            );
+        } elseif (count($res) == 1) {
+            $this->CustomerID = $res['CustomerID'];
+            $this->user_token = md5(json_encode($res));
+            return array('Hash' => $this->user_token);
+        }
     }
-}
-public function registeradmin($username, $email, $phone, $postcode, $password)
-{
-    global $sqsdb;
-    if ($sqsdb->registerUseradmin( $username,  $email, $phone, $postcode, $password)) {
-        return true;
-    } else {
-        return 0;
+    public function registeradmin($username, $email, $phone, $postcode, $password)
+    {
+        global $sqsdb;
+        if ($sqsdb->registerUseradmin($username,  $email, $phone, $postcode, $password)) {
+            return true;
+        } else {
+            return 0;
+        }
     }
-}
-public function adminupdate($username, $email, $phone, $postcode, $password)
-{
-    global $sqsdb;
-    if ($sqsdb->updateprofile($this->CustomerID, $username,  $email, $phone, $postcode, $password)) {
-        return true;
-    } else {
-        return 0;
+    public function adminupdate($username, $email, $phone, $postcode, $password)
+    {
+        global $sqsdb;
+        if ($sqsdb->updateprofile($this->CustomerID, $username,  $email, $phone, $postcode, $password)) {
+            return true;
+        } else {
+            return 0;
+        }
     }
-}
 
-public function adminlogEvent($ip_addr,$action,$PHPSESSID)
-{
-    global $sqsdb;
-    if ($sqsdb->adminlogevent($this->CustomerID,$ip_addr,$action,$PHPSESSID)) {
-        return true;
-    } else {
-        return 0;
+    public function adminlogEvent($ip_addr, $action, $PHPSESSID)
+    {
+        global $sqsdb;
+        if ($sqsdb->adminlogevent($this->CustomerID, $ip_addr, $action, $PHPSESSID)) {
+            return true;
+        } else {
+            return 0;
+        }
     }
-}
-function displayuser()
-{
-global $sqsdb;
-$result=$sqsdb->userdisplay();
-return $result;
-}
-function adduser($username, $email, $phone, $postcode, $password,$usertype)
-{
-global $sqsdb;
-if ($sqsdb->useradd($username, $email, $phone, $postcode, $password,$usertype)) {
-    return true;
-} else {
-    return false;
-}
-}
-function deleteuser($CustomerID)
-{
-global $sqsdb;
-if ($sqsdb->userdelete($CustomerID)) {
-    return true;
-} else {
-    return false;
-}
-}
-function updateuser($CustomerID, $username, $email, $phone, $postcode, $password,$usertype)
-{
-global $sqsdb;
-if ($sqsdb->userupdate($CustomerID, $username, $email, $phone, $postcode, $password,$usertype)) {
-    return true;
-} else {
-    return false;
-}
-}
+    function displayuser()
+    {
+        global $sqsdb;
+        $result = $sqsdb->userdisplay();
+        return $result;
+    }
+    function displayorder()
+    {
+        global $sqsdb;
+        $result = $sqsdb->displayOrder();
+        return $result;
+    }
+    function displayordercontent()
+    {
+        global $sqsdb;
+        $result = $sqsdb->displayorderContent();
+        return $result;
+    }
+    function adduser($username, $email, $phone, $postcode, $password, $usertype)
+    {
+        global $sqsdb;
+        if ($sqsdb->useradd($username, $email, $phone, $postcode, $password, $usertype)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function deleteuser($CustomerID)
+    {
+        global $sqsdb;
+        if ($sqsdb->userdelete($CustomerID)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function updateuser($CustomerID, $username, $email, $phone, $postcode, $password, $usertype)
+    {
+        global $sqsdb;
+        if ($sqsdb->userupdate($CustomerID, $username, $email, $phone, $postcode, $password, $usertype)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
