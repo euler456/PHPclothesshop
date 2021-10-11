@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 $request = Request::createFromGlobals();
 $response = new Response();
 $session = new Session(new NativeSessionStorage(), new AttributeBag());
-/*
+
 if(isset($_SERVER['HTTP_REFERER'])) {
 $http_origin = $_SERVER['HTTP_REFERER'];
 if ( $http_origin == 'http://localhost/clothesshop/')
@@ -27,7 +27,7 @@ if ( $http_origin == 'http://localhost/clothesshop/')
 }}
 else{
     $response->setStatusCode(400);
-}*/
+}
 $response->headers->set('Content-Type', 'application/json');
 $response->headers->set('Access-Control-Allow-Headers', 'origin, content-type, accept');
 $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -348,6 +348,13 @@ if (empty($request->query->all())) {
             } elseif ($res === 0) {
                 $response->setStatusCode(500);
             }
+        }
+        elseif ($request->query->getAlpha('action') == 'displaysingleproduct') {
+            $res = $session->get('sessionObj')->displaysingleproduct( $request->request->get('productID'));
+            $response->setContent(json_encode($res));
+            $response->setStatusCode(200);
+           
+          
         }
         elseif ($request->query->getAlpha('action') == 'deleteOrder') {
             $res = $session->get('sessionObj')->deleteOrder(

@@ -499,6 +499,15 @@ class sqsuser
             return false;
         }
     }
+    function displaysingleProduct($productID)
+    {
+        $sql = "SELECT * FROM products where productID = :productID;";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
+        $result = $stmt->execute();
+        $row = $stmt->fetchAll();
+        return  $row;
+    }
     function orderProduct($productID, $productname, $price, $size, $CustomerID, $image)
     {
         $sql = "INSERT INTO orderitem (productID,productname,price,size,orderID,image)  VALUES (:productID,:productname,:price,:size,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ),:image);";

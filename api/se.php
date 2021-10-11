@@ -180,6 +180,12 @@ class sqsSession
             return false;
         }
     }
+    public function displaysingleproduct($productID)
+    {
+        global $sqsdb;
+        $result = $sqsdb->displaysingleProduct($productID);
+        return $result;
+    }
     public function orderproduct($productID, $productname, $price, $size, $image)
     {
         global $sqsdb;
