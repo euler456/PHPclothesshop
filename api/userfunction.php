@@ -508,6 +508,15 @@ class sqsuser
         $row = $stmt->fetchAll();
         return  $row;
     }
+    function displaysingleUser($CustomerID)
+    {
+        $sql = "SELECT * FROM customer where CustomerID = :CustomerID;";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+        $result = $stmt->execute();
+        $row = $stmt->fetchAll();
+        return  $row;
+    }
     function orderProduct($productID, $productname, $price, $size, $CustomerID, $image)
     {
         $sql = "INSERT INTO orderitem (productID,productname,price,size,orderID,image)  VALUES (:productID,:productname,:price,:size,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ),:image);";

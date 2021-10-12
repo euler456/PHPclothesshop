@@ -186,6 +186,12 @@ class sqsSession
         $result = $sqsdb->displaysingleProduct($productID);
         return $result;
     }
+    public function displaysingleuser($CustomerID)
+    {
+        global $sqsdb;
+        $result = $sqsdb->displaysingleUser($CustomerID);
+        return $result;
+    }
     public function orderproduct($productID, $productname, $price, $size, $image)
     {
         global $sqsdb;

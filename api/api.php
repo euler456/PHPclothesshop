@@ -353,8 +353,11 @@ if (empty($request->query->all())) {
             $res = $session->get('sessionObj')->displaysingleproduct( $request->request->get('productID'));
             $response->setContent(json_encode($res));
             $response->setStatusCode(200);
-           
-          
+        }
+        elseif ($request->query->getAlpha('action') == 'displaysingleuser') {
+            $res = $session->get('sessionObj')->displaysingleuser( $request->request->get('CustomerID'));
+            $response->setContent(json_encode($res));
+            $response->setStatusCode(200);
         }
         elseif ($request->query->getAlpha('action') == 'deleteOrder') {
             $res = $session->get('sessionObj')->deleteOrder(
