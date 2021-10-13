@@ -417,10 +417,10 @@ class sqsSession
             return false;
         }
     }
-    function updateuser($CustomerID, $username, $email, $phone, $postcode, $password, $usertype)
+    function updateuser($CustomerID, $username, $email, $phone, $postcode, $password)
     {
         global $sqsdb;
-        if ($sqsdb->userupdate($CustomerID, $username, $email, $phone, $postcode, $password, $usertype)) {
+        if ($sqsdb->userupdate($CustomerID, $username, $email, $phone, $postcode, $password)) {
             return true;
         } else {
             return false;

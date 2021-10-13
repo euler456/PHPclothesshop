@@ -54,7 +54,9 @@ if (empty($request->query->all())) {
     }
     //if the request is post , the code will start the action which is in the POST Block
     if ($request->getMethod() == 'POST') {
-        // register
+        // register  
+       
+         
         if ($request->query->getAlpha('action') == 'register') {
             if ($request->request->has('username')) {
                 $res = $sqsdb->userExists($request->request->get('username'));
@@ -635,35 +637,30 @@ if (empty($request->query->all())) {
             if ($res === false) {
                 $response->setStatusCode(400);
             } else {
-                if ($request->request->has('username')) {
-                    $res = $sqsdb->userExists($request->request->get('username'));
-                    if ($res) {
-                        $response->setStatusCode(418);
-                    }
-                } else {
+                $CustomerID = $session->get('sessionObj')->input_testing($request->request->get('CustomerID'));
+                $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
+                $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
+                $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
+                $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
+                $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
                     if (
-                        $request->request->has('CustomerID') and
-                        $request->request->has('username') and
-                        $request->request->has('email') and
-                        $request->request->has('phone') and
-                        $request->request->has('postcode') and
-                        $request->request->has('password') and
-                        $request->request->has('usertypes')
+                        empty($CustomerID)=== false and
+                        empty($username)=== false and
+                        empty($email)=== false and
+                        empty($phone)=== false and
+                        empty($postcode)=== false and
+                        empty($password) === false
+                      
                     ) {
-                        $username = $session->get('sessionObj')->input_testing($request->request->getAlpha('username'));
-                        $email = $session->get('sessionObj')->input_testing($request->request->get('email'));
-                        $phone = $session->get('sessionObj')->input_testing($request->request->get('phone'));
-                        $postcode = $session->get('sessionObj')->input_testing($request->request->get('postcode'));
-                        $password = $session->get('sessionObj')->input_testing($request->request->get('password'));
-                        $usertype = $session->get('sessionObj')->input_testing($request->request->get('usertypes'));
+                      
                         $res = $session->get('sessionObj')->updateuser(
                             $request->request->get('CustomerID'),
                             $username,
                             $email,
                             $phone,
                             $postcode,
-                            $password,
-                            $usertype
+                            $password
+                            
                         );
                         if ($res === true) {
                             $response->setStatusCode(201);
@@ -675,11 +672,12 @@ if (empty($request->query->all())) {
                             $response->setStatusCode(500);
                         }
                     } else {
-                        $response->setStatusCode(400);
+                        $response->setStatusCode(403);
                     }
-                }
+                
             }
         }
+    
     }
     //if the request from the front-end JS is GET , the code will start the action which is in the GET Block
     if ($request->getMethod() == 'GET') {

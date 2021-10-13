@@ -449,9 +449,9 @@ class sqsuser
             return false;
         }
     }
-    function userupdate($CustomerID, $username, $email, $phone, $postcode, $password, $usertype)
+    function userupdate($CustomerID, $username, $email, $phone, $postcode, $password)
     {
-        $sql = "UPDATE customer SET username = :username,password = MD5(:password) , email = :email, phone = :phone, postcode = :postcode ,usertype=:usertype WHERE CustomerID = :CustomerID";
+        $sql = "UPDATE customer SET username = :username,password = MD5(:password) , email = :email, phone = :phone, postcode = :postcode WHERE CustomerID = :CustomerID";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
@@ -459,7 +459,6 @@ class sqsuser
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
         $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
-        $stmt->bindParam(':usertype', $usertype, PDO::PARAM_STR);
         $result = $stmt->execute();
         if ($result === true) {
             return true;
@@ -510,7 +509,7 @@ class sqsuser
     }
     function displaysingleUser($CustomerID)
     {
-        $sql = "SELECT * FROM customer where CustomerID = :CustomerID;";
+        $sql = "SELECT CustomerID,username,email ,phone,postcode FROM customer where CustomerID = :CustomerID;";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
         $result = $stmt->execute();
