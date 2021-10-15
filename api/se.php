@@ -171,6 +171,15 @@ class sqsSession
             return false;
         }
     }
+    public function addorderitem( $ProductID, $Size,$orderID)
+    {
+        global $sqsdb;
+        if ($sqsdb->addOrderitem($ProductID, $Size,$orderID)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function deleteProduct($productID)
     {
         global $sqsdb;
@@ -184,6 +193,12 @@ class sqsSession
     {
         global $sqsdb;
         $result = $sqsdb->displaysingleProduct($productID);
+        return $result;
+    }
+    public function displaysingleorder($orderID)
+    {
+        global $sqsdb;
+        $result = $sqsdb->displaysingleOrder($orderID);
         return $result;
     }
     public function displaysingleuser($CustomerID)
@@ -244,15 +259,7 @@ class sqsSession
         $result = $sqsdb->otherdisplayproduct();
         return $result;
     }
-    public function orderquantity($F_ID, $foodname, $price, $quantity, $totalprice)
-    {
-        global $sqsdb;
-        if ($sqsdb->orderquantityfood($F_ID, $foodname, $price, $quantity, $totalprice, $this->CustomerID)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+  
     public function showorderform()
     {
         global $sqsdb;
@@ -399,10 +406,10 @@ class sqsSession
         $result = $sqsdb->displayorderContent();
         return $result;
     }
-    function adduser($username, $email, $phone, $postcode, $password, $usertype)
+    function adduser($username, $email, $phone, $postcode, $password)
     {
         global $sqsdb;
-        if ($sqsdb->useradd($username, $email, $phone, $postcode, $password, $usertype)) {
+        if ($sqsdb->useradd($username, $email, $phone, $postcode, $password)) {
             return true;
         } else {
             return false;
@@ -421,6 +428,24 @@ class sqsSession
     {
         global $sqsdb;
         if ($sqsdb->userupdate($CustomerID, $username, $email, $phone, $postcode, $password)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function updateorder(   $orderID, $orderstatus, $CustomerID, $totalprice)
+    {
+        global $sqsdb;
+        if ($sqsdb->updateOrder($orderID, $orderstatus, $CustomerID, $totalprice)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function addorder(    $orderstatus, $CustomerID, $totalprice)
+    {
+        global $sqsdb;
+        if ($sqsdb->addOrder( $orderstatus, $CustomerID, $totalprice)) {
             return true;
         } else {
             return false;

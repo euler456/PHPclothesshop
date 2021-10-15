@@ -264,24 +264,7 @@ class sqsuser
         }
     }
 
-    function orderquantityfood($productID, $productname, $price, $quantity, $totalprice, $CustomerID)
-    {
-
-        $sql = "INSERT INTO orderitem (productID,productname,price,quantity,totalprice,orderID)  VALUES (:productID,:productname,:price,:quantity,:totalprice,(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID ));";
-        $stmt = $this->dbconn->prepare($sql);
-        $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);
-        $stmt->bindParam(':productname', $productname, PDO::PARAM_STR);
-        $stmt->bindParam(':price', $price, PDO::PARAM_INT);
-        $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
-        $stmt->bindParam(':totalprice', $totalprice, PDO::PARAM_INT);
-        $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
-        $result = $stmt->execute();
-        if ($result === true) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    
     function getconfirmorderform($CustomerID)
     {
         $sql = "SELECT * FROM orderform where orderID=(SELECT max(orderID) FROM orderform where CustomerID=:CustomerID)";
@@ -420,16 +403,15 @@ class sqsuser
         $row = $stmt->fetchAll();
         return  $row;
     }
-    function useradd($username, $email, $phone, $postcode, $password, $usertype)
+    function useradd($username, $email, $phone, $postcode, $password)
     {
-        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,MD5(:password),:usertype);";
+        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,MD5(:password),'user');";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
         $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
         $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-        $stmt->bindParam(':usertype', $usertype, PDO::PARAM_STR);
         $result = $stmt->execute();
         if ($result === true) {
             return true;
@@ -466,8 +448,54 @@ class sqsuser
             return false;
         }
     }
+    function updateOrder($orderID, $orderstatus, $CustomerID, $totalprice)
+    {
+        $sql = "UPDATE orderform SET orderstatus = :orderstatus,CustomerID = :CustomerID , totalprice = :totalprice WHERE orderID = :orderID";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+        $stmt->bindParam(':orderID', $orderID, PDO::PARAM_STR);
+        $stmt->bindParam(':orderstatus', $orderstatus, PDO::PARAM_STR);
+        $stmt->bindParam(':totalprice', $totalprice, PDO::PARAM_INT);  
+        $result = $stmt->execute();
+        if ($result === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function addOrder( $orderstatus, $CustomerID, $totalprice)
+    {
+        $sql = "INSERT INTO orderform (orderstatus,CustomerID,totalprice) VALUES(:orderstatus,:CustomerID ,:totalprice ) ;";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+        $stmt->bindParam(':orderstatus', $orderstatus, PDO::PARAM_STR);
+        $stmt->bindParam(':totalprice', $totalprice, PDO::PARAM_INT);  
+        $result = $stmt->execute();
+        if ($result === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function addOrderitem($ProductID, $Size,$orderID)
+    {
 
-
+        $sql = "INSERT INTO orderitem (productID,productname,price,size,orderID,image) 
+        VALUES (:ProductID,(SELECT products.productname FROM products where products.productID = :ProductID),
+        (SELECT products.price FROM products where products.productID = :ProductID),:Size,:orderID
+        ,(SELECT products.image FROM products where products.productID = :ProductID)) ";
+        $stmt = $this->dbconn->prepare($sql);
+        //  $stmt->bindParam(':productID', $productID, PDO::PARAM_INT);   
+        $stmt->bindParam(':ProductID', $ProductID, PDO::PARAM_INT);
+        $stmt->bindParam(':orderID', $orderID, PDO::PARAM_INT);
+        $stmt->bindParam(':Size', $Size, PDO::PARAM_STR);
+        $result = $stmt->execute();
+        if ($result === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     //===================food control===============
     function addproductditem($productname, $price, $types, $image)
     {
@@ -512,6 +540,15 @@ class sqsuser
         $sql = "SELECT CustomerID,username,email ,phone,postcode FROM customer where CustomerID = :CustomerID;";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+        $result = $stmt->execute();
+        $row = $stmt->fetchAll();
+        return  $row;
+    }
+    function displaysingleOrder($orderID)
+    {
+        $sql = "SELECT * FROM orderform where orderID = :orderID;";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':orderID', $orderID, PDO::PARAM_INT);
         $result = $stmt->execute();
         $row = $stmt->fetchAll();
         return  $row;
