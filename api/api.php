@@ -208,6 +208,7 @@ if (empty($request->query->all())) {
             $res = $session->get('sessionObj')->orderdelete(
                 $request->request->get('orderitem_ID')
             );
+            $session->get('sessionObj')->adminsumtotalprice( $request->request->get('orderID'));
             if ($res === true) {
                 $response->setStatusCode(201);
             } elseif ($res === false) {
@@ -356,6 +357,7 @@ if (empty($request->query->all())) {
             $res = $session->get('sessionObj')->deleteOrder(
                 $request->request->get('orderID')
             );
+           
             if ($res === true) {
                 $ip = $request->getClientIp();
                 $res = $session->get('sessionObj')->adminlogEvent($ip, 'delete orderID', $request->cookies->get('PHPSESSID'));
@@ -414,28 +416,7 @@ if (empty($request->query->all())) {
                     $response->setStatusCode(400);
                 }
             }
-        } elseif ($request->query->getAlpha('action') == 'checkout') {
-            $ip = $request->getClientIp();
-            $res = $session->get('sessionObj')->logEvent($ip, 'checkout', $request->cookies->get('PHPSESSID'));
-            $cname = $session->get('sessionObj')->input_testing($request->request->get('cname'));
-            $ccnum = $session->get('sessionObj')->input_testing($request->request->get('ccnum'));
-            $expmonth = $session->get('sessionObj')->input_testing($request->request->get('expmonth'));
-            $cvv = $session->get('sessionObj')->input_testing($request->request->get('cvv'));
-            $res = $session->get('sessionObj')->checkout(
-                $cname,
-                $ccnum,
-                $expmonth,
-                $expyear,
-                $cvv
-            );
-            if ($res === true) {
-                $response->setStatusCode(201);
-            } elseif ($res === false) {
-                $response->setStatusCode(403);
-            } elseif ($res === 0) {
-                $response->setStatusCode(500);
-            }
-        } elseif ($request->query->getAlpha('action') == 'checkoutupdate') {
+        }  elseif ($request->query->getAlpha('action') == 'checkoutupdate') {
             $res = $session->get('sessionObj')->checkoutupdate($request->request->get('orderID'));
             if ($res === true) {
                 $response->setStatusCode(201);
@@ -743,13 +724,13 @@ if (empty($request->query->all())) {
                         empty($orderID)=== false and
                         empty($ProductID)=== false             
                     ) {
+                       
                         $res = $session->get('sessionObj')->addorderitem(
                             $ProductID,
                             $Size,
                             $orderID
-                            
-                            
                         );
+                        $session->get('sessionObj')->adminsumtotalprice($orderID);
                         if ($res === true) {
                             $response->setStatusCode(201);
                             $ip = $request->getClientIp();

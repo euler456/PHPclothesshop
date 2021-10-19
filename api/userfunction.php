@@ -26,6 +26,35 @@ class sqsuser
     function daylimit()
     {
     }
+    function admincheckLogin($u, $p,$ip_addr)
+    {
+        // Return uid if user/password tendered are correct otherwise 0
+        $sql = "SELECT * FROM admin WHERE username = :username";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':username', $u, PDO::PARAM_STR);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (strlen($retVal['password']) > 0) {
+                //only usertype is admin can login admin panel
+                if ( password_verify($p,$retVal['password']) && $retVal['usertype'] == 'admin' && $retVal['ip_address'] == $ip_addr) {
+                    return array(
+                        'adminID' => $retVal['adminID'],
+                        'username' => $retVal['username'],
+                        'usertype' => $retVal['usertype']
+                    );
+                } else {
+                   echo("ddd");
+                   echo($ip_addr);
+                    return false;
+                }
+            } else {
+                return array('username' => $retVal['username']);
+            }
+        } else {
+            return false;
+        }
+    }
 
 
     function checkLogin($u, $p)
@@ -38,7 +67,7 @@ class sqsuser
         if ($stmt->rowCount() > 0) {
             $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
             if (strlen($retVal['password']) > 0) {
-                if ($retVal['password'] == MD5($p) && $retVal['usertype'] == 'user') { // encrypt & decrypt
+                if (password_verify($p,$retVal['password']) && $retVal['usertype'] == 'user') { // encrypt & decrypt
                     return array(
                         'CustomerID' => $retVal['CustomerID'],
                         'username' => $retVal['username'],
@@ -91,13 +120,7 @@ class sqsuser
     }
     function registerUser($username, $email, $phone, $postcode, $password)
     {
-        // Retister user into system, assume validation has happened.
-        // return UID created or false if fail
-        //            $sql = "UPDATE customer SET Username = :Username, Pass = :Pass, Email = :Email, Phone = :Phone=1 WHERE CustomerID = :CustomerID";
-
-        //            $lastCustID = $this->dbconn->lastInsertID();
-
-        //            $sql = "INSERT INTO customer(CustomerID,Username,Pass,Email,Phone)  VALUES (:CustomerID,:Username,:Pass,:Email, :Phone)";
+        $password2 = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,MD5(:password),'user');";
         $stmt = $this->dbconn->prepare($sql);
         //            $stmt->bindParam(':CustomerID', $lastCustID, PDO::PARAM_INT);
@@ -105,7 +128,7 @@ class sqsuser
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
         $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password2, PDO::PARAM_STR);
 
         $result = $stmt->execute();
         if ($result === true) {
@@ -196,9 +219,18 @@ class sqsuser
             return false;
         }
     }
-
-
-
+    function adminsumtotalpriceff($orderID)
+    {
+        $sql = "UPDATE orderform SET totalprice = (SELECT SUM(price) FROM orderitem  WHERE orderID= :orderID  ) ;";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':orderID', $orderID, PDO::PARAM_INT);
+        $result = $stmt->execute();
+        if ($result === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function displayshoworderform($CustomerID)
     {
         $sql = "SELECT * FROM orderitem where orderID=(SELECT max(orderID) orderID FROM orderform where CustomerID= :CustomerID );";
@@ -323,44 +355,15 @@ class sqsuser
 
     //======================admin panel==========================
 
-    function admincheckLogin($u, $p,$ip_addr)
-    {
-        // Return uid if user/password tendered are correct otherwise 0
-        $sql = "SELECT * FROM admin WHERE username = :username";
-        $stmt = $this->dbconn->prepare($sql);
-        $stmt->bindParam(':username', $u, PDO::PARAM_STR);
-        $stmt->execute();
-        if ($stmt->rowCount() > 0) {
-            $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (strlen($retVal['password']) > 0) {
-                //only usertype is admin can login admin panel
-                if ($retVal['password'] == $p && $retVal['usertype'] == 'admin' && $retVal['ip_address'] == $ip_addr) {
-                    return array(
-                        'adminID' => $retVal['adminID'],
-                        'username' => $retVal['username'],
-                        'usertype' => $retVal['usertype']
-                    );
-                } else {
-                   echo("ddd");
-                   echo($ip_addr);
-                    return false;
-                }
-            } else {
-                return array('username' => $retVal['username']);
-            }
-        } else {
-            return false;
-        }
-    }
-
+  
     function registerUseradmin($username,  $password ,$ip_addr)
     {
-
+        $password2 = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO admin (username,password,usertype ,ip_address)  
-    VALUES (:username,password_hash(:password),'admin',:ip_address);";
+    VALUES (:username,:password,'admin',:ip_address);";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password2, PDO::PARAM_STR);
         $stmt->bindParam(':ip_address', $ip_addr, PDO::PARAM_STR);
         $result = $stmt->execute();
         if ($result === true) {
@@ -412,22 +415,7 @@ class sqsuser
         $row = $stmt->fetchAll();
         return  $row;
     }
-    function useradd($username, $email, $phone, $postcode, $password)
-    {
-        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,MD5(:password),'user');";
-        $stmt = $this->dbconn->prepare($sql);
-        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
-        $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if ($result === true) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+   
     function userdelete($CustomerID)
     {
         $sql = "DELETE FROM customer where CustomerID = :CustomerID;";

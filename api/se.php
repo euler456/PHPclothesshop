@@ -327,6 +327,16 @@ class sqsSession
         };
         return $sqsdb;
     }
+    public function adminsumtotalprice($orderID)
+    {
+        global $sqsdb;
+        if ($sqsdb->adminsumtotalpriceff($orderID)) {
+            return true;
+        } else {
+            return false;
+        };
+        return $sqsdb;
+    }
     public function checkout($cname, $ccnum, $expmonth, $expyear, $cvv)
     {
         global $sqsdb;
@@ -420,7 +430,7 @@ class sqsSession
     function adduser($username, $email, $phone, $postcode, $password)
     {
         global $sqsdb;
-        if ($sqsdb->useradd($username, $email, $phone, $postcode, $password)) {
+        if ($sqsdb->registerUser($username, $email, $phone, $postcode, $password)) {
             return true;
         } else {
             return false;
