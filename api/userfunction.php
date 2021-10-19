@@ -68,6 +68,18 @@ class sqsuser
             return false;
         }
     }
+    function adminExists($u)
+    {
+        $sql = "SELECT * FROM admin WHERE username = :username";
+        $stmt = $this->dbconn->prepare($sql);
+        $stmt->bindParam(':username', $u, PDO::PARAM_STR);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function userid($c)
     {
         $sql = "SELECT CustomerID FROM customer WHERE username = :username";
@@ -311,10 +323,10 @@ class sqsuser
 
     //======================admin panel==========================
 
-    function admincheckLogin($u, $p)
+    function admincheckLogin($u, $p,$ip_addr)
     {
         // Return uid if user/password tendered are correct otherwise 0
-        $sql = "SELECT * FROM customer WHERE username = :username";
+        $sql = "SELECT * FROM admin WHERE username = :username";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':username', $u, PDO::PARAM_STR);
         $stmt->execute();
@@ -322,16 +334,15 @@ class sqsuser
             $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
             if (strlen($retVal['password']) > 0) {
                 //only usertype is admin can login admin panel
-                if ($retVal['password'] == MD5($p) && $retVal['usertype'] == 'admin') {
+                if ($retVal['password'] == $p && $retVal['usertype'] == 'admin' && $retVal['ip_address'] == $ip_addr) {
                     return array(
-                        'CustomerID' => $retVal['CustomerID'],
+                        'adminID' => $retVal['adminID'],
                         'username' => $retVal['username'],
-                        'email' => $retVal['email'],
-                        'phone' => $retVal['phone'],
-                        'postcode' => $retVal['postcode'],
                         'usertype' => $retVal['usertype']
                     );
                 } else {
+                   echo("ddd");
+                   echo($ip_addr);
                     return false;
                 }
             } else {
@@ -342,17 +353,15 @@ class sqsuser
         }
     }
 
-    function registerUseradmin($username, $email, $phone, $postcode, $password)
+    function registerUseradmin($username,  $password ,$ip_addr)
     {
 
-        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  
-    VALUES (:username,:email, :phone,:postcode,MD5(:password),'admin');";
+        $sql = "INSERT INTO admin (username,password,usertype ,ip_address)  
+    VALUES (:username,password_hash(:password),'admin',:ip_address);";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
-        $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
         $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':ip_address', $ip_addr, PDO::PARAM_STR);
         $result = $stmt->execute();
         if ($result === true) {
             return true;
@@ -361,12 +370,12 @@ class sqsuser
         }
     }
 
-    function adminlogevent($CustomerID, $ip_addr, $action, $PHPSESSID)
+    function adminlogevent($admin, $ip_addr, $action, $PHPSESSID)
     {
         $sql = "INSERT INTO logtable (CustomerID ,ip_addr, action ,usertype,PHPSESSID) 
     VALUES (:CustomerID,MD5(:ip_addr),:action,'admin',MD5(:PHPSESSID));";
         $stmt = $this->dbconn->prepare($sql);
-        $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
+        $stmt->bindParam(':CustomerID', $admin, PDO::PARAM_INT);
         $stmt->bindParam(':ip_addr',  $ip_addr, PDO::PARAM_INT);
         $stmt->bindParam(':action', $action, PDO::PARAM_STR);
         $stmt->bindParam(':PHPSESSID', $PHPSESSID, PDO::PARAM_STR);
@@ -606,17 +615,5 @@ class sqsuser
 
 
 
-    public function uploadimg($pdo, $image_path)
-    {
-        $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $query = "INSERT INTO users`(userID`, email, password,  userpic) VALUES (:UI,:EM,:PW,:UP)";
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':UI', $_POST['userID']);
-        $stmt->bindParam(':EM', $_POST['email']);
-        $stmt->bindParam(':PW', $hashed_password);
-        $stmt->bindParam(':UP', $image_path);
-        $stmt->execute();
-        http_response_code(201);
-        echo "register passed";
-    }
+   
 }

@@ -6,6 +6,7 @@ class sqsSession
     private $last_visit = 0;
     private $all_visit = array();
     private $CustomerID = 0;
+    private $admin = 0;
     private $username;
     private $email;
     private $phone;
@@ -140,9 +141,21 @@ class sqsSession
             return array('Hash' => $this->user_token);
         }
     }
+    public function adminisLoggedIn()
+    {
+        if ($this->admin === 0) {
+            return false;
+        } else {
+            return array('Hash' => $this->user_token);
+        }
+    }
     public function logout()
     {
         $this->CustomerID = 0;
+    }
+    public function adminlogout()
+    {
+        $this->admin = 0;
     }
     public function validate($type, $dirty_string)
     {
@@ -337,33 +350,31 @@ class sqsSession
     //=============admin
 
 
-    public function adminlogin($username, $password)
+    public function adminlogin($username, $password,$ip_addr)
     {
         global $sqsdb;
 
-        $res = $sqsdb->admincheckLogin($username, $password);
+        $res = $sqsdb->admincheckLogin($username, $password,$ip_addr);
         if ($res === false) {
             return false;
         } elseif (count($res) > 1) {
-            $this->CustomerID = $res['CustomerID'];
+            $this->admin = $res['adminID'];
             $this->user_token = md5(json_encode($res));
             return array(
                 'username' => $res['username'],
-                'email' => $res['email'],
-                'phone' => $res['phone'],
                 'usertype' => $res['usertype'],
                 'Hash' => $this->user_token
             );
         } elseif (count($res) == 1) {
-            $this->CustomerID = $res['CustomerID'];
+            $this->admin = $res['adminID'];
             $this->user_token = md5(json_encode($res));
             return array('Hash' => $this->user_token);
         }
     }
-    public function registeradmin($username, $email, $phone, $postcode, $password)
+    public function registeradmin($username,  $password ,$ip_addr)
     {
         global $sqsdb;
-        if ($sqsdb->registerUseradmin($username,  $email, $phone, $postcode, $password)) {
+        if ($sqsdb->registerUseradmin($username,  $password ,$ip_addr)) {
             return true;
         } else {
             return 0;
@@ -382,7 +393,7 @@ class sqsSession
     public function adminlogEvent($ip_addr, $action, $PHPSESSID)
     {
         global $sqsdb;
-        if ($sqsdb->adminlogevent($this->CustomerID, $ip_addr, $action, $PHPSESSID)) {
+        if ($sqsdb->adminlogevent($this->admin, $ip_addr, $action, $PHPSESSID)) {
             return true;
         } else {
             return 0;
