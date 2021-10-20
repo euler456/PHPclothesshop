@@ -28,7 +28,6 @@ class sqsuser
     }
     function admincheckLogin($u, $p,$ip_addr)
     {
-        // Return uid if user/password tendered are correct otherwise 0
         $sql = "SELECT * FROM admin WHERE username = :username";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':username', $u, PDO::PARAM_STR);
@@ -67,7 +66,7 @@ class sqsuser
         if ($stmt->rowCount() > 0) {
             $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
             if (strlen($retVal['password']) > 0) {
-                if (password_verify($p,$retVal['password']) && $retVal['usertype'] == 'user') { // encrypt & decrypt
+                if (password_verify($p,$retVal['password']) ) { // encrypt & decrypt
                     return array(
                         'CustomerID' => $retVal['CustomerID'],
                         'username' => $retVal['username'],
@@ -76,6 +75,7 @@ class sqsuser
                         'postcode' => $retVal['postcode']
                     );
                 } else {
+                   
                     return false;
                 }
             } else {
@@ -121,7 +121,7 @@ class sqsuser
     function registerUser($username, $email, $phone, $postcode, $password)
     {
         $password2 = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,MD5(:password),'user');";
+        $sql = "INSERT INTO customer (username,email,phone,postcode,password,usertype)  VALUES (:username,:email, :phone,:postcode,:password,'user');";
         $stmt = $this->dbconn->prepare($sql);
         //            $stmt->bindParam(':CustomerID', $lastCustID, PDO::PARAM_INT);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
@@ -148,12 +148,13 @@ class sqsuser
 
         //            $sql = "INSERT INTO customer(CustomerID,Username,Pass,Email,Phone)  VALUES (:CustomerID,:Username,:Pass,:Email, :Phone)";
         // $currentuserid = "SELECT CustomerID FROM customer WHERE username = '$username'";
-        $sql = "UPDATE customer SET username = :username,password = MD5(:password), email = :email, phone = :phone, postcode = :postcode WHERE CustomerID = :CustomerID";
+        $password2 = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "UPDATE customer SET username = :username,password = :password, email = :email, phone = :phone, postcode = :postcode WHERE CustomerID = :CustomerID";
         $stmt = $this->dbconn->prepare($sql);
         //            $stmt->bindParam(':CustomerID', $lastCustID, PDO::PARAM_INT);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password2, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
         $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);
@@ -376,7 +377,7 @@ class sqsuser
     function adminlogevent($admin, $ip_addr, $action, $PHPSESSID)
     {
         $sql = "INSERT INTO logtable (CustomerID ,ip_addr, action ,usertype,PHPSESSID) 
-    VALUES (:CustomerID,MD5(:ip_addr),:action,'admin',MD5(:PHPSESSID));";
+    VALUES (:CustomerID,:ip_addr,:action,'admin',MD5(:PHPSESSID));";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $admin, PDO::PARAM_INT);
         $stmt->bindParam(':ip_addr',  $ip_addr, PDO::PARAM_INT);
@@ -430,11 +431,12 @@ class sqsuser
     }
     function userupdate($CustomerID, $username, $email, $phone, $postcode, $password)
     {
-        $sql = "UPDATE customer SET username = :username,password = MD5(:password) , email = :email, phone = :phone, postcode = :postcode WHERE CustomerID = :CustomerID";
+        $password2 = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "UPDATE customer SET username = :username,password = :password , email = :email, phone = :phone, postcode = :postcode WHERE CustomerID = :CustomerID";
         $stmt = $this->dbconn->prepare($sql);
         $stmt->bindParam(':CustomerID', $CustomerID, PDO::PARAM_INT);
         $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $password2, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_INT);
         $stmt->bindParam(':postcode', $postcode, PDO::PARAM_INT);

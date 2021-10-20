@@ -55,8 +55,6 @@ if (empty($request->query->all())) {
     //if the request is post , the code will start the action which is in the POST Block
     if ($request->getMethod() == 'POST') {
         // register  
-       
-         
         if ($request->query->getAlpha('action') == 'register') {
             if ($request->request->has('username')) {
                 $res = $sqsdb->userExists($request->request->get('username'));
@@ -205,6 +203,21 @@ if (empty($request->query->all())) {
         elseif ($request->query->getAlpha('action') == 'orderdelete') {
             $ip = $request->getClientIp();
             $res = $session->get('sessionObj')->logEvent($ip, 'orderdelete', $request->cookies->get('PHPSESSID'));
+            $res = $session->get('sessionObj')->orderdelete(
+                $request->request->get('orderitem_ID')
+            );
+      
+            if ($res === true) {
+                $response->setStatusCode(201);
+            } elseif ($res === false) {
+                $response->setStatusCode(403);
+            } elseif ($res === 0) {
+                $response->setStatusCode(500);
+            }
+        } 
+        elseif ($request->query->getAlpha('action') == 'adminorderdelete') {
+            $ip = $request->getClientIp();
+            $res = $session->get('sessionObj')->logEvent($ip, 'admin orderdelete', $request->cookies->get('PHPSESSID'));
             $res = $session->get('sessionObj')->orderdelete(
                 $request->request->get('orderitem_ID')
             );
