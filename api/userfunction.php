@@ -8,8 +8,8 @@ class sqsuser
     public function __construct()
     {
         //here to connect the database in the computer
-        $dbURI = 'mysql:host=' . 'localhost' . ';port=3307;dbname=' . 'clothes';
-        $this->dbconn = new PDO($dbURI, 'root', '');
+        $dbURI = 'mysql:host=' . 'us-cdbr-east-04.cleardb.com' . ';port=3306;dbname=' . 'heroku_891a775daeb9c86';
+        $this->dbconn = new PDO($dbURI, 'be4a8775657ee9', 'f10455d5');
         $this->dbconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         // $cleardb_url = parse_url(getenv("mysql://b48b00a18bfa2e:1964f939@us-cdbr-east-04.cleardb.com/heroku_be04d0b5c2244ab?reconnect=true"));
         //$cleardb_server = $cleardb_url["us-cdbr-east-04.cleardb.com"];
