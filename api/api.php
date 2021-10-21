@@ -21,7 +21,7 @@ $session = new Session(new NativeSessionStorage(), new AttributeBag());
 
 if(isset($_SERVER['HTTP_REFERER'])) {
 $http_origin = $_SERVER['HTTP_REFERER'];
-if ( $http_origin == 'http://localhost/clothesshop/')
+if ( $http_origin == 'https://clotheshopproj2.herokuapp.com/')
 {
     $response->headers->set('Access-Control-Allow-Origin', $http_origin);
 }}
