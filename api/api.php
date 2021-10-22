@@ -468,7 +468,7 @@ if (empty($request->query->all())) {
             }
         } elseif ($request->query->getAlpha('action') == 'adminlogin') {
             $ip = $request->getClientIp();
-         
+         echo($ip);
             if ($request->request->has('username') and $request->request->has('password')) {
                 $res = $session->get('sessionObj')->adminlogin(
                     $request->request->get('username'),

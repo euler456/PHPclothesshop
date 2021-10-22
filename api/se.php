@@ -366,7 +366,7 @@ class sqsSession
 
         $res = $sqsdb->admincheckLogin($username, $password,$ip_addr);
         if ($res === false) {
-            echo('dd');
+    
             return false;
         } elseif (count($res) > 1) {
             $this->admin = $res['adminID'];
