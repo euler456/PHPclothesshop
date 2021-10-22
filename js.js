@@ -448,7 +448,7 @@ function orderchart(){
             output+=`<tr class="chartcontainer">
             <td class="prdid" style="display:none">${response[i].productID}</td>
             <td class="oditem" style="display:none">${response[i].orderitem_ID}</td>
-            <td ><img src='./images/${response[i].image }' style="width: 100px; height:100px;margin-top:20px;"></td>
+            <td ><img src='./images/${response[i].image }.jpg' style="width: 100px; height:100px;margin-top:20px;"></td>
             <td class="pdname">${response[i].productname}</td>
             <td>${response[i].size}</td>
             <td class="pdprice">${response[i].price}</td>
