@@ -36,7 +36,7 @@ class sqsuser
             $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
             if (strlen($retVal['password']) > 0) {
                 //only usertype is admin can login admin panel
-                if ( password_verify($p,$retVal['password']) && $retVal['usertype'] == 'admin' && $retVal['ip_address'] == $ip_addr) {
+                if ( password_verify($p,$retVal['password']) && $retVal['usertype'] == 'admin' ) {
                     return array(
                         'adminID' => $retVal['adminID'],
                         'username' => $retVal['username'],
