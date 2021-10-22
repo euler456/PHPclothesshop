@@ -477,7 +477,7 @@ if (empty($request->query->all())) {
                 );
                 if ($res === false) {
                     $response->setContent(json_encode($request->request));
-                    echo('dd');
+                
                     $response->setStatusCode(401);
                 } elseif (count($res) == 1) {
                     $response->setStatusCode(203);
