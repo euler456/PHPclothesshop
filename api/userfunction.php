@@ -26,7 +26,7 @@ class sqsuser
     function daylimit()
     {
     }
-    function admincheckLogin($u, $p,$ip_addr)
+    function admincheckLogin($u, $p)
     {
         $sql = "SELECT * FROM admin WHERE username = :username";
         $stmt = $this->dbconn->prepare($sql);
@@ -36,15 +36,14 @@ class sqsuser
             $retVal = $stmt->fetch(PDO::FETCH_ASSOC);
             if (strlen($retVal['password']) > 0) {
                 //only usertype is admin can login admin panel
-                if ( password_verify($p,$retVal['password']) && $retVal['usertype'] == 'admin' && $retVal['ip_address'] == $ip_addr) {
+                if ( password_verify($p,$retVal['password']) && $retVal['usertype'] == 'admin' ) {
                     return array(
                         'adminID' => $retVal['adminID'],
                         'username' => $retVal['username'],
                         'usertype' => $retVal['usertype']
                     );
                 } else {
-                   echo("ddd");
-                   echo($ip_addr);
+                
                     return false;
                 }
             } else {

@@ -478,7 +478,7 @@ if (empty($request->query->all())) {
                 if ($res === false) {
                     $response->setContent(json_encode($request->request));
                     $response->setStatusCode(201);
-                    echo($ip);
+            
                 } elseif (count($res) == 1) {
                     $response->setStatusCode(203);
                     $response->setContent(json_encode($res));
