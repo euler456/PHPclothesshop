@@ -19,9 +19,9 @@ $request = Request::createFromGlobals();
 $response = new Response();
 $session = new Session(new NativeSessionStorage(), new AttributeBag());
 
-if(isset($_SERVER['HTTP_REFERER'])) {
-$http_origin = $_SERVER['HTTP_REFERER'];
-if ( $http_origin == 'https://clotheshopproj2.herokuapp.com/' ||$http_origin ==  'https://clothesshopadmin.herokuapp.com/')
+if(isset($_SERVER['HTTP_ORIGIN'])) {
+$http_origin = $_SERVER['HTTP_ORIGIN'];
+if ( $http_origin == 'https://clotheshopproj2.herokuapp.com/' || 'https://clothesshopadmin.herokuapp.com/')
 {
     $response->headers->set('Access-Control-Allow-Origin', $http_origin);
 }}
@@ -468,7 +468,7 @@ if (empty($request->query->all())) {
             }
         } elseif ($request->query->getAlpha('action') == 'adminlogin') {
             $ip = $request->getClientIp();
-        
+         
             if ($request->request->has('username') and $request->request->has('password')) {
                 $res = $session->get('sessionObj')->adminlogin(
                     $request->request->get('username'),
@@ -477,8 +477,7 @@ if (empty($request->query->all())) {
                 );
                 if ($res === false) {
                     $response->setContent(json_encode($request->request));
-                    $response->setStatusCode(201);
-            
+                    $response->setStatusCode(401);
                 } elseif (count($res) == 1) {
                     $response->setStatusCode(203);
                     $response->setContent(json_encode($res));
