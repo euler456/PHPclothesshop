@@ -206,7 +206,7 @@ fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=womendisplay',
     for(let i in response){
         output+=`<tr class="container">
         <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
-        <td><img  src='./images/${response[i].image }.jpg' style="width: 500px; height:400px;margin-top:20px;"></td>
+        <td><img  src='./images/${response[i].image}.jpg' style="width: 500px; height:400px;margin-top:20px;"></td>
         <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
         <td  class="pdname">${response[i].productname}</td>
         <td class="pdprice">${response[i].price}</td>
@@ -303,7 +303,7 @@ $(document).on('click', '.order', function(event) {
         for(let i in response){
             output+=`<tr class="container">
             <td class="pdimg" style="visibility:hidden">${response[i].image}</td>
-            <td ><img  src='./images/${response[i].image }.jpg' style="width: 500px; height:400px;margin-top:20px;"></td>
+            <td ><img  src='./images/${response[i].image}.jpg' style="width: 500px; height:400px;margin-top:20px;"></td>
             <td class="prdid" style="visibility:hidden">${response[i].productID}</td>
             <td  class="pdname">${response[i].productname}</td>
             <td class="pdprice">${response[i].price}</td>
@@ -448,7 +448,7 @@ function orderchart(){
             output+=`<tr class="chartcontainer">
             <td class="prdid" style="display:none">${response[i].productID}</td>
             <td class="oditem" style="display:none">${response[i].orderitem_ID}</td>
-            <td ><img src='./images/${response[i].image }.jpg' style="width: 100px; height:100px;margin-top:20px;"></td>
+            <td ><img src='./images/${response[i].image}.jpg' style="width: 100px; height:100px;margin-top:20px;"></td>
             <td class="pdname">${response[i].productname}</td>
             <td>${response[i].size}</td>
             <td class="pdprice">${response[i].price}</td>
