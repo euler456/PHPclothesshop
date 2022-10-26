@@ -58,7 +58,6 @@ h1,h2{
   display: none;
   width: 100%;
   padding: 10%;
-  
   border-top: none;
 }
 .tab {
@@ -128,4 +127,28 @@ input[type="radio"] {
   width: 80%;
     left:100px;
     top:50px;
+}
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+.button1 {
+  background-color: #555555;
+  width: 200px;
+  padding: 10px 10px;
+  margin: 4px 2px;
+} /* Black */
+.button2 {
+  background-color: #555555;
+  width: 100px;
+  
+} /* Black */
+.input0{
+ width: 300px;
 }

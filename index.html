@@ -34,11 +34,11 @@
       <h2>Login</h2>
       <form id="loginform" action="#" method="POST">
         <p>
-          <input type="text" name="username" placeholder="user name" id="loginuser" value="username"
+          <input type="text" class="form-control space input0"name="username" placeholder="user name" id="loginuser" value="username"
             onchange="getuserid()" required>
         </p>
         <p>
-          <input type="password" name="password" placeholder="password" id="loginpass" value="password" required>
+          <input type="password" class="form-control space input0" name="password" placeholder="password" id="loginpass" value="password" required>
         </p>
         <p>
           <input class="btn" type="submit" value="Sign In" />
@@ -46,7 +46,7 @@
        
       </form>
       <p>
-        <button class="tablinks" onclick="opencontent(event, 'Register')">Create an account</button>
+        <button class="button button1" onclick="opencontent(event, 'Register')">Create an account</button>
       </p>
     </div>
    
@@ -99,12 +99,12 @@
     <div id="Myaccount" class="tabcontent">
       <h3>Myaccount</h3>
       <form id="editform" action="#" method="POST">
-      <input class="form-control space" type="text" name="username"  id="upusername" value="userna" required></input>
-      <input class="form-control space" type="email" name="email"  id="upemail" value="username@username2" required></input>
-      <input class="form-control space" type="number" name="phone"  id="upphone" value="1012" required></input>
-      <input class="form-control space" type="number" name="postcode"  id="uppostcode" value="10102" required></input>
-      <input class="form-control space" type="password" name="password" placeholder="password" id="uppassword" value="password2" required></input>
-      <input class="form-control space" type="password" name="password2" placeholder="password again" id="uppassword2" value="password2" required></input>
+      <input class="form-control space input0" type="text" name="username"  id="upusername" value="userna" required></input>
+      <input class="form-control space input0" type="email" name="email"  id="upemail" value="username@username2" required></input>
+      <input class="form-control space input0" type="number" name="phone"  id="upphone" value="1012" required></input>
+      <input class="form-control space input0" type="number" name="postcode"  id="uppostcode" value="10102" required></input>
+      <input class="form-control space input0" type="password" name="password" placeholder="password" id="uppassword" value="password2" required></input>
+      <input class="form-control space input0" type="password" name="password2" placeholder="password again" id="uppassword2" value="password2" required></input>
       <input class="btn" type="submit" value="submit"></input>
       <form>
     </div>
@@ -124,21 +124,21 @@
     <div id="Register" class="tabcontent">
       <div id="target" class="alert alert-danger fade-in is-paused toggle d-none" role="alert">Username exist</div>
       <form action="#" method="POST" id="registerform">
-        <h1>registerform</h1>
-        <input class="form-control space" type="text" name="username" placeholder="username" id="regusername"  required>
-        <input class="form-control space" type="email" name="email" placeholder="email" id="regemail" required>
-        <input class="form-control space" type="text" name="phone" placeholder="phone" id="regphone"  required>
-        <input  class="form-control space" type="number" name="postcode" placeholder="postcode" id="regpostcode" required>
-        <input class="form-control space" type="password" name="password" placeholder="password" id="regpassword"  required>
-        <input  class="form-control space" type="password" name="password2" placeholder="password again" id="regpassword2" 
+        <h1>Register</h1>
+        <input class="form-control space input0" type="text" name="username" placeholder="username" id="regusername"  required>
+        <input class="form-control space input0" type="email" name="email" placeholder="email" id="regemail" required>
+        <input class="form-control space input0" type="text" name="phone" placeholder="phone" id="regphone"  required>
+        <input  class="form-control space input0" type="number" name="postcode" placeholder="postcode" id="regpostcode" required>
+        <input class="form-control space input0" type="password" name="password" placeholder="password" id="regpassword"  required>
+        <input  class="form-control space input0" type="password" name="password2" placeholder="password again" id="regpassword2" 
           required>
-        <input class="btn" type="submit" name="submit" onclick="">
+        <input class="form-control space button button2" type="submit" name="submit" value="submit" onclick="">
         
       </form>
-      <input class="btn"  type="submit" value="return" onclick="opencontent(event, 'Home')">
+      <input class="form-control space button button2"  type="submit" value="return" onclick="opencontent(event, 'Home')">
     </div>
     <div id="payment" class="tabcontent">
-      
+
       <form action="#" method="POST">
         <h1>Your order</h1>
         <table>
