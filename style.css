@@ -138,11 +138,11 @@ input[type="radio"] {
   font-size: 16px;
   cursor: pointer;
 }
+
 .button1 {
-  background-color: #555555;
+  background-color: #340dbe;
   width: 200px;
-  padding: 10px 10px;
-  margin: 4px 2px;
+  
 } /* Black */
 .button2 {
   background-color: #555555;
