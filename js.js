@@ -21,7 +21,7 @@ function opencontent(evt, idlocate) {
     evt.currentTarget.className += " active";
    }
    else{
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=isloggedin', {
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=isloggedin', {
         method: 'POST',
         credentials: 'include'
     })
@@ -63,7 +63,7 @@ function fetchlogin(evt) {
     fd.append('username', loginuser.value);
     fd.append('password', loginpass.value);
 
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=login', {
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=login', {
             method: 'POST',
             body: fd,
             credentials: 'include'
@@ -105,7 +105,7 @@ function fetchlogin(evt) {
 }
 
 function fetchlogout() {
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=logout', {
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=logout', {
             method: 'GET',
             credentials: 'include'
         })
@@ -140,7 +140,7 @@ function fetchregister(evt) {
     fd.append('password', regpassword.value);
     fd.append('password2', regpassword2.value);
     fd.append('csrf', localStorage.getItem('csrf'));
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=register', {
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=register', {
             method: 'POST',
             body: fd,
             credentials: 'include'
@@ -167,7 +167,7 @@ function fetchregister(evt) {
 
 
 function mendisplay(){
-fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=mendisplay',
+fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=mendisplay',
 {
     method: 'POST',
     credentials: 'include'
@@ -195,7 +195,7 @@ fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=mendisplay',
 }
 
 function womendisplay(){
-fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=womendisplay',
+fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=womendisplay',
 {
     method: 'POST',
     credentials: 'include'
@@ -233,7 +233,7 @@ function fetchupdate(evt) {
     fd.append('password', uppassword.value);
     fd.append('password2', uppassword2.value);
     fd.append('csrf', localStorage.getItem('csrf'));
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=update', 
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=update', 
     {
         method: 'POST',
         body: fd,
@@ -267,7 +267,7 @@ $(document).on('click', '.order', function(event) {
     fd.append('price', price );
     fd.append('size', size );
     fd.append('image', image );
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=orderproduct', 
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=orderproduct', 
     {
         method: 'POST',
         body: fd,
@@ -292,7 +292,7 @@ $(document).on('click', '.order', function(event) {
   });
 
   function otherdisplay(){
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=otherdisplay',
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=otherdisplay',
     {
         method: 'POST',
         credentials: 'include'
@@ -323,7 +323,7 @@ $(document).on('click', '.orderother', function(event) {
     fd.append('productname', productname );
     fd.append('price', price );
     fd.append('image', image );
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=orderotherproduct', 
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=orderotherproduct', 
     {
         method: 'POST',
         body: fd,
@@ -360,7 +360,7 @@ function fetchcreateorder(evt) {
     var fd = new FormData();
     fd.append('orderstatus', orderstatus );
     fd.append('totalprice', totalprice );
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=createorder', 
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=createorder', 
     {
         method: 'POST',
         body: fd,
@@ -386,7 +386,7 @@ function fetchcreateorder(evt) {
         var orderitem_ID = $(this).closest('.chartcontainer').find('.oditem').html();
         var fd = new FormData();
         fd.append('orderitem_ID',orderitem_ID );
-        fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=orderdelete', 
+        fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=orderdelete', 
         {
             method: 'POST',
             body: fd,
@@ -409,7 +409,7 @@ function fetchcreateorder(evt) {
         
       });
     function fetchislogin() {
-        fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=isloggedin', {
+        fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=isloggedin', {
                 method: 'POST',
                 credentials: 'include'
             })
@@ -436,7 +436,7 @@ function fetchcreateorder(evt) {
     orderchart();
 }
 function orderchart(){
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=showorderform',
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=showorderform',
     {
         method: 'GET',
         credentials: 'include'
@@ -460,7 +460,7 @@ function orderchart(){
     }
 
 function sumtotalpriceff(){
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=sumtotalprice',
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=sumtotalprice',
     {
         method: 'GET',
         credentials: 'include'
@@ -474,7 +474,7 @@ function sumtotalpriceff(){
         if(headers.status == 201) {
             console.log('fail to sum');
             
-            fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=confirmorderform',
+            fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=confirmorderform',
             {
                 method: 'GET',
                 credentials: 'include'
@@ -498,7 +498,7 @@ function sumtotalpriceff(){
 }
 
 function fetchcheckoutupdate() {
-    fetch('https://clotheshopproj2.herokuapp.com/api/api.php?action=checkoutupdate', {
+    fetch('C:/Users/euler/OneDrive/desktop/githubstuffs/clothes/websitepage/api/api.php?action=checkoutupdate', {
             method: 'POST',
             credentials: 'include'
         })
